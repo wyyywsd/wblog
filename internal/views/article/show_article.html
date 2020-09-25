@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章详情</title>
+    <link href="/static/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/article.css" rel="stylesheet">
+    <link href="/static/css/blog_hone.css" rel="stylesheet">
+    <link href="/static/css/base.css" rel="stylesheet">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+    </script>
+    <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+{{template "navbar.html" .}}
+<div class="container">
+    <div class="row ">
+{{/*        <div class="col-md-10 col-md-offset-1">*/}}
+        <div class="col-md-12 ">
+            <ul class="breadcrumb">
+                <li><a href="/index">Home</a></li>
+                <li class="active">{{.article.ArticleTitle}}</li>
+            </ul>
+            <h3 >{{.article.ArticleTitle}}</h3>
+            <div class="row ">
+                <div class="col-md-1 ">
+                    <img src="{{.article_user.ProfilePhoto}}" alt="..." class="img-circle" data-toggle="dropdown" style="width: 35px;height: 35px;">
+{{/*                    <span class="User_Data">头像</span><br/>*/}}
+                </div>
+                <div class="col-md-2">
+                    <span class="User_Data">{{.article_user.Username}}</span>
+                    </span>
+                </div>
+                <span class="Create_Time" style="margin-right: 100px;">
+                <span class="glyphicon glyphicon-calendar"></span>{{dateFormat .article.CreatedAt "06-01-02 15:04"}}</span>
+                <a href="/edit_article/{{.article.ID}}">编辑</a>
+            </div>
+            <hr/>
+
+
+
+            <div id="article_content_html">
+
+            </div>
+            <!-- 以下代码可以把文章重的html标签 解析到页面上 -->
+            <script>
+                $('#article_content_html').html({{.article.ArticleContent}});
+            </script>
+
+            <hr/>
+
+            评论
+            。。。
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

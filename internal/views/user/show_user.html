@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的主页</title>
+    <link href="/static/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/blog_hone.css" rel="stylesheet">
+    <link href="/static/css/base.css" rel="stylesheet">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+    </script>
+    <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $("#show_user_articles").click(function(){
+                $.ajax({url:"/show_user_articles/1",success:function(result){
+                        $("#div1").html(result);
+                    }});
+            });
+        });
+    </script>
+</head>
+<body>
+{{template "navbar.html" .}}
+<div class="container">
+    <div class="row ">
+        <div class="col-md-8">
+            <div class="col-md-2 ">
+                <img src="{{.current_user.ProfilePhoto}}" alt="..." class="img-circle" data-toggle="dropdown" style="width: 80px;height: 80px;">
+            </div>
+            <div class="col-md-6">
+                <h3>{{.current_user.Username}}</h3>
+                关注 ｜ 粉丝 ｜ 文章 ｜ 收获喜欢
+
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="container">
+    <div class="row ">
+        <div class="col-md-10">
+           <br/>
+            <ul class="nav nav-tabs">
+                <li role="presentation" class="active"><a id = "show_user_articles" style="cursor:pointer;">我的文章</a></li>
+                <li role="presentation"><a href="#">我的动态</a></li>
+                <li role="presentation"><a href="#">最新评论</a></li>
+            </ul>
+            <br/>
+            <div class="col-md-10">
+                <div id="div1">{{template "_user_articles.html" .}}</div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

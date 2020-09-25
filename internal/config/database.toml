@@ -1,0 +1,15 @@
+listen = ":8080"
+user_api = "http://127.0.0.1:8080"
+[dbservers]
+    host = "127.0.0.1"
+    port = 5432
+    dbname = "my_wblog"
+    user = "mac"
+    password = "wyyywsd"
+
+
+[redisservers]
+    [redisservers.usercache]
+        addr = "127.0.0.1:6379"
+        db = 0
+        password = ""

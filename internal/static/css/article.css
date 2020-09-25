@@ -1,0 +1,26 @@
+.article_title_center
+{
+    text-align:center;
+}
+
+.sansserif
+{
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.User_Data {
+    float: left;
+    color: #8c8c8c;
+}
+.Create_Time {
+    float: right;
+    color: #8c8c8c;
+}
+
+.center_signin {
+    margin: auto;
+    width: 50%;
+    border: 3px solid green;
+    padding: 10px;
+}
+
