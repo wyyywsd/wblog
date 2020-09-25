@@ -6,7 +6,7 @@ package router_w
 //
 ////初始化engin
 //func InitEngine() (engine *gin.Engine,tomlConfig *config.MyApiConfig,err error){
-//	flag.StringVar(&tomlFilePath, "config", "/Users/mac/work_space/gorm_demo/internal/config/database.toml", "服务配置文件")
+//	flag.StringVar(&tomlFilePath, "config", "/Users/mac/work_space/wblog/internal/config/database.toml", "服务配置文件")
 //	flag.StringVar(&mode, "mode", "release", "模型-debug还是release还是test")
 //	runtime.GOMAXPROCS(runtime.NumCPU())
 //	flag.Parse()
