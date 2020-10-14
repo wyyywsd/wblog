@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"gorm_demo/internal/db"
 	"gorm_demo/internal/models"
 	"net/http"
 )
@@ -14,13 +15,18 @@ func Show_Article(context *gin.Context) {
 	article := models.FindArticleById(id)
 	article_user,_:= models.FindUserByArticle(&article)
 	session := sessions.Default(context)
-	fmt.Println(article.ArticleContent)
+	//fmt.Println(article.ArticleContent)
 	current_user,_,_ :=  models.FindUserByUserName(fmt.Sprint(session.Get("sessionid")))
+	//该文章下的所有评论
+	comments := models.FindCommentByArticle(article.ID)
+
+	fmt.Println(comments)
 	context.HTML(200,"show_article.html",gin.H{
 		"article":article,
 		"article_user": article_user,
 		"user_session": session.Get("sessionid"),
 		"current_user": current_user,
+		"comments": comments,
 	})
 }
 
@@ -78,8 +84,6 @@ func UpdateArticle(context *gin.Context){
 	current_article := models.FindArticleById(id)
 	article_title := context.PostForm("article_title")
 	article_content := context.PostForm("article_content")
-	//article_label_id := context.PostForm("article_label")
-	//label := models.FindLabelById(article_label_id)
 	is_public_str :=context.PostForm("is_public")
 	is_public := true
 	if is_public_str == "false"{
@@ -100,4 +104,14 @@ func UpdateArticle(context *gin.Context){
 	fmt.Println("更新文章成功")
 	context.Redirect(http.StatusMovedPermanently, "/index")
 
+}
+
+func DeleteArticle(context *gin.Context){
+	id := context.Param("id")
+	current_article := models.FindArticleById(id)
+	session := sessions.Default(context)
+	current_user_name := session.Get("sessionid")
+	//删除
+	db.W_Db.Delete(current_article)
+	context.Redirect(http.StatusMovedPermanently, "/user/"+fmt.Sprint(current_user_name)+"")
 }

@@ -16,17 +16,7 @@ import (
 
 func main() {
 	db.InitDbConnection()
-	//router_w.InitEngine()
 	db.W_Db.AutoMigrate(&models.User{},&models.Article{},&models.Comment{},&models.Label{},&models.Sort{},&models.UserFriend{})
-	//a := "12333B"
-	//b := strings.Split(a,"")
-	//for _,c := range a{
-	//	fmt.Println("////////////////////////////////////////////////////////////",unicode.IsLetter(c))
-	//}
-
-	//article := models.FindArticleById("1")
-	//label := models.FindLabelById("1")
-	//db.W_Db.Model(&article).Association("Labels").Append(label)
 	router := gin.Default()
 	setTemplate(router)
 
@@ -56,27 +46,16 @@ func main() {
 		auth.GET("/user_setting",controllers.UserSetting)
 		auth.GET("/_basic_setting",controllers.BasicSetting)
 		auth.POST("/update_user",controllers.UpdateUser)
-		//auth.GET("/show_user_articles",controllers.ShowUserArticles)
 		auth.GET("/edit_article/:id",controllers.EditArticle)
 		auth.POST("/update_article/:id",controllers.UpdateArticle)
 		auth.GET("/show_user_articles/:page",controllers.ShowUserArticles)
 		auth.GET("/picture_recognition",controllers.PictureRecognition)
 		auth.POST("/submit_picture_recognition",controllers.SubmitPictureRecognition)
-
+		auth.GET("/delete_article/:id",controllers.DeleteArticle)
+		auth.POST("/new_comment/:id",controllers.NewComment)
 
 	}
-
-	//auth := router.Group("")
-	//auth.Use(controllers.AuthRequired())
-	//{
-	//	auth.GET("/index",controllers.ArticleIndex)
-	//	auth.GET("/article/:id",controllers.Show_Article)
-	//	auth.GET("/label/:id",controllers.Show_Article_By_Label)
-	//}
-
 	router.Run(":8080")
-
-
 }
 
 

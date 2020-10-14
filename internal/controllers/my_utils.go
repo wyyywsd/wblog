@@ -29,7 +29,7 @@ func SubmitPictureRecognition(context *gin.Context){
 	picture_64_re1 := strings.Replace(picture_64,"<p><img src=\"data:image/png;base64,","",-1)
 	picture_64_re2 := strings.Replace(picture_64_re1,"\" style=\"max-width:100%;\"><br></p>","",-1)
 	url_values := url.Values{"image": {picture_64_re2}}
-	resp, err := http.PostForm("https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?access_token=24.00b92f7c9f4ce1d35e3da0da07cd3a1e.2592000.1602321268.282335-20446596",
+	resp, err := http.PostForm("https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?access_token=24.85ab595b0905856f5f7b8552de2dfd38.2592000.1604914532.282335-20446596",
 		url_values)
 	if err != nil {
 		fmt.Println(err)
@@ -57,6 +57,6 @@ func SubmitPictureRecognition(context *gin.Context){
 		temp := words["words"]
 		iccids = iccids+temp
 	}
-
+fmt.Println(iccids)
 	context.String(http.StatusOK,iccids)
 }

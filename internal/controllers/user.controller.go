@@ -7,6 +7,7 @@ import (
 	"gorm_demo/internal/models"
 	"io"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -105,10 +106,11 @@ func UpdateUser(context *gin.Context) {
 					session.Save()
 				}
 
-				context.HTML(200,"index.html",gin.H{
-					"current_user":current_user,
-					"user_session": session.Get("sessionid"),
-				})
+				//context.HTML(200,"index.html",gin.H{
+				//	"current_user":current_user,
+				//	"user_session": session.Get("sessionid"),
+				//})
+				context.Redirect(http.StatusMovedPermanently, "/user/"+fmt.Sprint(current_user_name)+"")
 			}
 
 		}else{
@@ -144,31 +146,6 @@ func BasicSetting(context *gin.Context) {
 }
 
 
-//func ImgTest(c *gin.Context){
-//	file, header, err := c.Request.FormFile("file")
-//	if err != nil {
-//		c.String(http.StatusBadRequest, fmt.Sprintf("file err : %s", err.Error()))
-//		return
-//	}
-//
-//	filename := header.Filename
-//
-//	out, err := os.Create("public/" + filename)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	defer out.Close()
-//
-//	_, err = io.Copy(out, file)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//
-//	filepath := "http://localhost:8080/file/" + filename
-//	fmt.Println("dahsiid******************************************",filepath)
-//	c.JSON(http.StatusOK, gin.H{"filepath": filepath})
-//
-//}
 
 func ShowUserArticles(context *gin.Context){
 	//如果获取不到page 默认就是1
@@ -177,7 +154,6 @@ func ShowUserArticles(context *gin.Context){
 		page = "1"
 
 	}
-	fmt.Println("------------------------------------------------------------------",page)
 	//将string类型的page 设置成int
 	i, _ := strconv.Atoi(page)
 	session := sessions.Default(context)

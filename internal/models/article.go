@@ -15,7 +15,7 @@ type Article struct {
 	ArticleContent string
 	ArticleViews int `gorm:"default:0"`
 	ArticleCommentCount int `gorm:"default:0"`
-	ArticleData time.Time
+	ArticleDate time.Time
 	ArticleLikeCount int `gorm:"default:0"`
 	Comments      []*Comment `gorm:"ForeignKey:ArticleId"`
 	Sorts         []*Sort    `gorm:"many2many:artitle_sorts;"`
@@ -31,7 +31,7 @@ func CreateArticle(article_title string , article_content string, user_id uint, 
 		UserId: user_id,
 		ArticleTitle: article_title,
 		ArticleContent: article_content,
-		ArticleData: time.Now(),
+		ArticleDate: time.Now(),
 	}
 	db.W_Db.Create(&article)
 	//如果设置了私密 就更新为私密
@@ -80,7 +80,8 @@ func PublicArticleLimit(page int,articleCount int)([]*Article , error){
 //获取文章的数量
 func ArticleCount()int{
 	var count int
-	db.W_Db.Table("articles").Where("is_public = ?", true).Count(&count)
+	db.W_Db.Table("articles").Where("deleted_at IS NULL and is_public = ?", true).Count(&count)
+
 	fmt.Println("******************************************************************",count)
 	return count
 }
@@ -134,7 +135,7 @@ func UserArticleLimit(page int,articleCount int,user_id uint)([]*Article , error
 //获取当前用户文章的数量
 func UserArticleCount(user_id uint)int{
 	var count int
-	db.W_Db.Table("articles").Where("user_id = ?", user_id).Count(&count)
+	db.W_Db.Table("articles").Where("deleted_at IS NULL and  user_id = ?", user_id).Count(&count)
 	fmt.Println("******************************************************************",count)
 	return count
 }
