@@ -152,7 +152,6 @@ func ShowUserArticles(context *gin.Context){
 	page := context.Param("page")
 	if page == ""{
 		page = "1"
-
 	}
 	//将string类型的page 设置成int
 	i, _ := strconv.Atoi(page)

@@ -53,6 +53,7 @@ func main() {
 		auth.POST("/submit_picture_recognition",controllers.SubmitPictureRecognition)
 		auth.GET("/delete_article/:id",controllers.DeleteArticle)
 		auth.POST("/new_comment/:id",controllers.NewComment)
+		auth.GET("/show_comment_by_article/:id/:page",controllers.ShowCommentByArticle)
 
 	}
 	router.Run(":8080")
@@ -64,6 +65,7 @@ func setTemplate(engine *gin.Engine) {
 		"dateFormat": helpers.DateFormat,
 		"truncate":   helpers.Truncate,
 		"replaceHtml": helpers.ReplaceHtml,
+		"getUser": helpers.GetUserByComment,
 	}
 
 	engine.SetFuncMap(funcMap)

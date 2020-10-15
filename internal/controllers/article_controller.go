@@ -11,22 +11,32 @@ import (
 
 
 func Show_Article(context *gin.Context) {
-	id :=context.Param("id")
-	article := models.FindArticleById(id)
+	article_id :=context.Param("id")
+	article := models.FindArticleById(article_id)
 	article_user,_:= models.FindUserByArticle(&article)
 	session := sessions.Default(context)
 	//fmt.Println(article.ArticleContent)
 	current_user,_,_ :=  models.FindUserByUserName(fmt.Sprint(session.Get("sessionid")))
-	//该文章下的所有评论
-	comments := models.FindCommentByArticle(article.ID)
+	//该文章下第一页的评论
+	comments := models.FindCommentByArticle(article_id,1,articleCommentCount)
+	comment_count := models.CommentCount(article_id)
+	//通过文章的数量 算出分页一共有多少页    如果有余数  就加一 目前先都加1  后面再改
+	pageCount := comment_count/articleCommentCount
+	if comment_count%articleCommentCount != 0{
+		pageCount = (comment_count/articleCommentCount)+1
+	}
 
-	fmt.Println(comments)
 	context.HTML(200,"show_article.html",gin.H{
 		"article":article,
 		"article_user": article_user,
 		"user_session": session.Get("sessionid"),
 		"current_user": current_user,
 		"comments": comments,
+		"comment_count": comment_count,
+		"pageCount":pageCount,
+		"current_page": 1,
+		"article_user_id": article.UserId,
+
 	})
 }
 

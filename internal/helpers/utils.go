@@ -1,6 +1,8 @@
 package helpers
 
 import (
+	"fmt"
+	"gorm_demo/internal/models"
 	"regexp"
 	"strings"
 )
@@ -34,5 +36,10 @@ func ReplaceHtml(article_content string) string {
 	return article_content
 
 
+}
+
+func GetUserByComment(user_id uint)models.User{
+	user:= models.FindUserById(fmt.Sprint(user_id))
+	return user
 }
 

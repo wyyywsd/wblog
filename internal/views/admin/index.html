@@ -111,14 +111,6 @@
                             {{dateFormat $postvalue.CreatedAt "06-01-02 15:04"}}
                         </span>
                     </div>
-{{/*                    <script>*/}}
-{{/*                        //替换掉所有的 html标签，得到Html标签中的内容*/}}
-{{/*                        var s= $postvalue;*/}}
-
-{{/*                        var dd=s.replace(/<\/?.+?>/g,"");*/}}
-{{/*                        var dds=dd.replace(/ /g,"");//dds为得到后的内容*/}}
-{{/*                        alert(dds);*/}}
-{{/*                    </script>*/}}
                     <div class="articleBody" id="article_content_htm">
                         {{$replaceHtml_content := replaceHtml $postvalue.ArticleContent}}
                         {{$length := len $replaceHtml_content}}
