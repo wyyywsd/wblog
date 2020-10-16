@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/spf13/viper"
 )
 
 var W_Db *gorm.DB
@@ -35,8 +36,12 @@ var W_Db *gorm.DB
 //}
 
 
-func InitDbConnection() {
-	const url = "host=127.0.0.1 user=mac dbname=my_wblog sslmode=disable password=wyyywsd"
+func InitDbConnection(dbKey string) {
+	host := viper.GetString(dbKey+".host")
+	user := viper.GetString(dbKey+".user")
+	dbname := viper.GetString(dbKey+".name")
+	password := viper.GetString(dbKey+".password")
+	url := "host="+host+" user="+user+" dbname="+dbname+" sslmode=disable password="+password+""
 	const postgres = "postgres"
 	var err error
 	W_Db,err = gorm.Open(postgres,url)

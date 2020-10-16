@@ -1,0 +1,11 @@
+# wblog 数据库配置信息
+my_wblog:
+  host: "localhost"
+  name: '###'
+  user: '###'
+  password: '###'
+
+#文字识别配置
+accurate_basic:
+  url: "https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?access_token="
+  access_token: "###"

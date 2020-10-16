@@ -8,6 +8,7 @@ import (
 	"gorm_demo/internal/db"
 	"gorm_demo/internal/helpers"
 	"gorm_demo/internal/models"
+	"gorm_demo/internal/util"
 	"html/template"
 	"net/http"
 )
@@ -15,10 +16,16 @@ import (
 
 
 func main() {
-	db.InitDbConnection()
+	util.InitConfig()
+	db.InitDbConnection("my_wblog")
 	db.W_Db.AutoMigrate(&models.User{},&models.Article{},&models.Comment{},&models.Label{},&models.Sort{},&models.UserFriend{})
 	router := gin.Default()
 	setTemplate(router)
+
+
+
+
+
 
 	//在路由中使用中间件调用store
 	var store = cookie.NewStore([]byte("secret"))

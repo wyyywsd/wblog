@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 	"gorm_demo/internal/models"
 	"io/ioutil"
 	"net/http"
@@ -29,7 +30,9 @@ func SubmitPictureRecognition(context *gin.Context){
 	picture_64_re1 := strings.Replace(picture_64,"<p><img src=\"data:image/png;base64,","",-1)
 	picture_64_re2 := strings.Replace(picture_64_re1,"\" style=\"max-width:100%;\"><br></p>","",-1)
 	url_values := url.Values{"image": {picture_64_re2}}
-	resp, err := http.PostForm("https://aip.baidubce.com/rest/2.0/ocr/v1/accurate_basic?access_token=24.85ab595b0905856f5f7b8552de2dfd38.2592000.1604914532.282335-20446596",
+	accurate_basic_url := viper.GetString("accurate_basic.url")
+	access_token := viper.GetString("accurate_basic.access_token")
+	resp, err := http.PostForm(accurate_basic_url+access_token,
 		url_values)
 	if err != nil {
 		fmt.Println(err)
