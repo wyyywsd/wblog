@@ -80,6 +80,10 @@ func AuthRequiredSession() gin.HandlerFunc{
 			context.HTML(200, "signin.html", gin.H{"message":"请先登录"})
 			//context.Next()
 			context.Abort()
+		}else{
+			option := sessions.Options{MaxAge: 3600}
+			session.Options(option)
+			session.Save()
 		}
 		//context.Next()
 	}
