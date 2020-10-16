@@ -12,40 +12,8 @@
     <!-- 下面两个是jquery第三方库 用于注册校验 -->
     <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/lib/jquery.js"></script>
     <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
-    <script>
-        // $.validator.setDefaults({
-        //     submitHandler: function() {
-        //         alert("提交事件!");
-        //
-        //     }
-        // });
-        $().ready(function() {
-            // 在键盘按下并释放及提交后验证提交表单
-            $("#signinForm").validate({
-                rules: {
-                    username: {
-                        required: true,
-                        minlength: 2
-                    },
-                    password: {
-                        required: true,
-                        minlength: 5
-                    }
-
-                },
-                messages: {
-                    username: {
-                        required: "请输入用户名",
-                        minlength: "用户名必需由两个字母组成"
-                    },
-                    password: {
-                        required: "请输入密码",
-                        minlength: "密码长度不能小于 5 个字母"
-                    }
-                }
-            });
-        });
-    </script>
+    <!-- 登陆校验 -->
+    <script src="/static/js/signin.js"></script>
     <style>
         .error{
             color: #ff0000;
@@ -54,11 +22,6 @@
 
 </head>
 <body>
-
-{{/*<div class="alert alert-info alert-dismissible" role="alert">*/}}
-{{/*    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>*/}}
-{{/*    <strong>Warning!</strong> {{.message}}*/}}
-{{/*</div>*/}}
 <div class="container">
     <div class="row ">
         <div class="col-md-12  col-md-offset-2"  style="margin-top: 250px;">
