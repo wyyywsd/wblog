@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解绑批次详情</title>
+    <link href="/static/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/blog_hone.css" rel="stylesheet">
+    <link href="/static/css/base.css" rel="stylesheet">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+    </script>
+    <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/js/show_unbind_batch_detail.js"></script>
+    <script>
+        var unbind_status = {{.unbind_batch.Status}}
+    </script>
+
+
+
+</head>
+<body>
+
+{{template "navbar.html" .}}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <ul class="breadcrumb">
+                <li><a href="/batch/index/1">Home</a></li>
+                <li class="active">{{dateFormat .unbind_batch.CreatedAt "2006-01-02-15:04"}}--{{.carrier.Name}}</li>
+            </ul>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal">新增卡号
+            </button>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal2">修改批次状态
+            </button>
+            <a href="/export_data/{{.unbind_batch.ID}}" role="button" class = "btn btn-default">导出卡号</a>
+            <br/><br/>
+            <table class="table table-hover">
+                <h3>{{.carrier.Name}}--本批次卡号列表</h3>
+                <thead>
+                <tr>
+                    <th>客户</th>
+                    <th>msisdn</th>
+                    <th>iccid</th>
+                    <th>更换设备的原因</th>
+                    <th>设备照片</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{$unbind_batch := .unbind_batch}}
+                {{range $postkey,$postvalue:=.sim_cards}}
+                    <tr>
+                        <td>{{$postvalue.AgentName}}</td>
+                        <td>{{$postvalue.Msisdn}}</td>
+                        <td>{{$postvalue.Iccid}}</td>
+                        <td>{{$postvalue.ReplaceReasonDisplay}}</td>
+                        <td>
+
+                            <span  class="glyphicon glyphicon-film" title="设备照片"
+                                    data-toggle="popover" data-placement="right"
+                                   data-trigger="hover" id = "img_sim_card{{$postvalue.ID}}">
+                            </span>
+                        </td>
+                        <script>
+                            $(function (){
+                                a = "<img  id = 'imm' src = '{{safeURL $postvalue.EquipmentPhoto}}' style='width:200'>"
+                                    if (a == ""){
+                                        a = ""
+                                    }
+                                $("#img_sim_card{{$postvalue.ID}}").popover({
+                                    animation:true,//淡入淡出
+                                    html:true,//content中插入html代码
+                                    container:"body",
+                                    content: a,//插入图片的路径 及 样式
+                                });
+                            });
+                        </script>
+
+                        <td><a onclick="javascript:if (confirm('确定删除吗？')) { return true;}else{return false;};" href="/delete_sim_card/{{$unbind_batch.ID}}/{{$postvalue.ID}}" role="button" class = "btn btn-default btn-xs">删除卡号</a></td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <nav aria-label="Page navigation">
+        <ul id = "index_article_page" class="pagination">
+        </ul>
+    </nav>
+    <br/>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">新增卡号</h4>
+            </div>
+            <form action="/new_sim_card/{{.unbind_batch.ID}}" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name = "agent_name" placeholder="请输入客户名">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name = "iccid" placeholder="请输入iccid">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name = "msisdn" placeholder="请输入msisdn">
+                    </div>
+                    <div class="form-group">
+                        <span>请选择更换设备的原因（以下为占比比较多的原因，如果有新增，请及时通知我加进去）</span>
+                        <select class="form-control" name = "replace_reason" >
+                            <option value ="equipment_damage">设备损坏</option>
+                            <option value ="test_equipment">测试设备</option>
+                            <option value ="misoperation">误操作</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input id="testFile" type="file">
+                        <hr>
+                        <img id="testImg"  style="max-height: 300px; height: 8em; min-width:8em;">
+                        <textarea id="testArea" style="width: 100%;height: 30em;" name = "image_base64" hidden></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">新增卡号</h4>
+            </div>
+            <form action="/update_unbind_batch_status/{{.unbind_batch.ID}}" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <span>请选择状态</span>
+                        <select class="form-control" style="width:100%;" name = "batch_status" >
+                            <option value ="pending" id = "pending">待提交运营商</option>
+                            <option value ="processing" id = "processing">已提交运营商</option>
+                            <option value ="success" id = "success">运营商已完成</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container" style="padding: 100px 50px 10px;" >
+
+</div>
+{{template "foot.html" .}}
+</body>
+</html>

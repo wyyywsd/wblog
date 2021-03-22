@@ -1,0 +1,23 @@
+{{define "_show_is_collect.html"}}
+    <script>
+        //收藏文章
+        function collect(article_id,is_collect) {
+            $.ajaxSetup({cache: false});
+            var url = "/collect_article/"+article_id+"/"+is_collect
+            //alert("点赞成功"+url)
+            $.ajax({url:url,success:function(result){
+                    $("#is_collect").html(result);
+                }});
+        }
+    </script>
+    {{$article := .article}}
+    {{$current_user := .current_user}}
+    {{$user_is_collect := $article.FindUserIsCollect $current_user}}
+    {{if ne .article_user.Username .user_session}}
+        {{if $user_is_collect}}
+            <span id = "collect" style="cursor:pointer;" onclick="collect({{.article.ID}},false)">取消收藏</span>
+        {{else}}
+            <span id = "collect" style="cursor:pointer;" onclick="collect({{.article.ID}},true)">收藏</span>
+        {{end}}
+    {{end}}
+{{end}}

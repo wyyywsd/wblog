@@ -10,13 +10,15 @@
     <link href="/static/css/base.css" rel="stylesheet">
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
+
+
 </head>
 <body>
 {{template "navbar.html" .}}
 <div class="container">
     <div class="row ">
 {{/*        <div class="col-md-10 col-md-offset-1">*/}}
-        <div class="col-md-12 ">
+        <div class="col-md-12 " >
             <ul class="breadcrumb">
                 <li><a href="/index">Home</a></li>
                 <li class="active">{{.article.ArticleTitle}}</li>
@@ -35,15 +37,19 @@
                 <span class="glyphicon glyphicon-calendar"></span>{{dateFormat .article.CreatedAt "06-01-02 15:04"}}</span>
                 {{if eq .article_user.Username .user_session}}
                 <a href="/edit_article/{{.article.ID}}">编辑</a>
-                <a href="/delete_article/{{.article.ID}}">删除</a>
+                <a onclick="javascript:if (confirm('确定删除吗？')) { return true;}else{return false;};" href="/delete_article/{{.article.ID}}">删除</a>
                 {{end}}
+                <div id = "is_collect">
+                    {{template "_show_is_collect.html" .}}
+                </div>
+
             </div>
             <hr/>
 
             <div id="article_content_html">
 
             </div>
-            <!-- 以下代码可以把文章重的html标签 解析到页面上 -->
+            <!-- 以下代码可以把文章中的html标签 解析到页面上 -->
             <script>
                 $('#article_content_html').html({{.article.ArticleContent}});
             </script>
@@ -58,7 +64,6 @@
             <h4>全部评论 {{.comment_count }}</h4></br>
             <div id="article_comments">
                 {{template "_show_comment.html" .}}
-
             </div>
 
     </div>

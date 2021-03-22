@@ -175,5 +175,37 @@ func ShowUserArticles(context *gin.Context){
 		"user_session": session.Get("sessionid"),
 		"current_user": current_user,
 		"current_page": i,
+		"page_type": "user_articles",
+	})
+}
+
+func ShowUserCollects(context *gin.Context){
+	//如果获取不到page 默认就是1
+	page := context.Param("page")
+	if page == ""{
+		page = "1"
+	}
+	//将string类型的page 设置成int
+	i, _ := strconv.Atoi(page)
+	session := sessions.Default(context)
+	current_user_name := session.Get("sessionid")
+	current_user,_,_ := models.FindUserByUserName(fmt.Sprint(current_user_name))
+	my_collect_articles,_ := models.FindUserCollectArticles(current_user.ID,userArticleCount,i)
+	//获取一共有多少文章
+	count := models.UserCollectArticlesCount(current_user.ID)
+	//通过文章的数量 算出分页一共有多少页    如果有余数  就加一 目前先都加1  后面再改
+	pageCount := count/userArticleCount
+	if count%userArticleCount != 0{
+		pageCount = (count/userArticleCount)+1
+	}
+
+	context.HTML(200, "_user_collect_articles.html", gin.H{
+		"articles":    my_collect_articles,
+		//"labels": 	labels,
+		"pageCount":pageCount,
+		"user_session": session.Get("sessionid"),
+		"current_user": current_user,
+		"current_page": i,
+		"page_type": "collect",
 	})
 }

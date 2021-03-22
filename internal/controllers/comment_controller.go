@@ -34,8 +34,8 @@ func ShowCommentByArticle(context *gin.Context){
 	}
 	//将string类型的page 设置成int
 	i, _ := strconv.Atoi(page)
-	//session := sessions.Default(context)
-	//current_user_name := session.Get("sessionid")
+	session := sessions.Default(context)
+	current_user,_,_ :=  models.FindUserByUserName(fmt.Sprint(session.Get("sessionid")))
 	//获取某页的评论
 	comments := models.FindCommentByArticle(article_id,i,articleCommentCount)
 	//获取该文章所有的评论
@@ -45,17 +45,54 @@ func ShowCommentByArticle(context *gin.Context){
 	if comment_count%articleCommentCount != 0{
 		pageCount = (comment_count/articleCommentCount)+1
 	}
+	comments[1].FindZansByComment()
+
 	context.HTML(200, "_show_comment.html", gin.H{
 		"comments":    comments,
 		"article": article,
 		"pageCount":pageCount,
-		//"user_session": session.Get("sessionid"),
+		"current_user": current_user,
 		"current_page": i,
 		"article_user_id": article.UserId,
 	})
+}
+
+//func LikeComment(context *gin.Context){
+//	fmt.Println("jinlaile")
+//	comment_id := context.Param("id")
+//	comment := models.FindCommentById(comment_id)
+//	var update_map = map[string]interface{}{}
+//	comment_like_count := comment.CommentLikeCount
+//	fmt.Println("该评论的点赞数为：",comment_like_count)
+//	update_map["CommentLikeCount"] = comment_like_count+1
+//	models.UpdateComment(comment,update_map)
+//	current_page := context.Param("page")
+//	context.Redirect(http.StatusMovedPermanently, "/show_comment_by_article/"+fmt.Sprint(comment.ArticleId)+"/"+current_page+"")
+//}
+
+func LikeComment(context *gin.Context){
+	comment_id := context.Param("id")
+	comment := models.FindCommentById(comment_id)
+	session := sessions.Default(context)
+	current_user_name := session.Get("sessionid")
+	current_user,_,_ := models.FindUserByUserName(fmt.Sprint(current_user_name))
+	current_page := context.Param("page")
+	is_zan_s := context.Param("is_zan")
+	zan,existsZan,_ := models.FindZanByUserIDAndCommentID(current_user.ID,comment.ID)
+	//在这里判断 是否有zan 表 如果有  就更新  如何没有 就新增
+	fmt.Println(zan)
+	is_zan := true
+	if is_zan_s == "false"{
+		fmt.Println("000ddijfijifjijdladjilfilhfijlasdiwdhiuhfgiljdlasdijn")
+		is_zan = false
+	}
+	if existsZan{
+		models.UpdateZan(zan,is_zan)
+	}else{
+		models.CreateZan(current_user.ID,comment.ID,is_zan)
+	}
 
 
 
-
-
+	context.Redirect(http.StatusMovedPermanently, "/show_comment_by_article/"+fmt.Sprint(comment.ArticleId)+"/"+current_page+"")
 }

@@ -18,11 +18,15 @@ import (
 func main() {
 	util.InitConfig()
 	db.InitDbConnection("my_wblog")
-	db.W_Db.AutoMigrate(&models.User{},&models.Article{},&models.Comment{},&models.Label{},&models.Sort{},&models.UserFriend{})
+	//自动迁移
+	db.W_Db.AutoMigrate(&models.User{},&models.Article{},&models.Comment{},
+	&models.Label{},&models.Sort{},&models.UserFriend{},&models.Zan{},&models.Collect{},
+	&models.UnbindBatch{},&models.SimCard{},&models.Carrier{})
 	router := gin.Default()
 	setTemplate(router)
 
-
+	//carrier := models.Carrier{Name: "新乡移动"}
+	//db.W_Db.Create(&carrier)
 
 
 
@@ -61,6 +65,18 @@ func main() {
 		auth.GET("/delete_article/:id",controllers.DeleteArticle)
 		auth.POST("/new_comment/:id",controllers.NewComment)
 		auth.GET("/show_comment_by_article/:id/:page",controllers.ShowCommentByArticle)
+		auth.GET("/like_comment/:id/:page/:is_zan",controllers.LikeComment)
+		auth.GET("/collect_article/:id/:is_collect",controllers.CollectArticle)
+		auth.GET("/show_user_collect_articles/:page",controllers.ShowUserCollects)
+		auth.GET("/search_article/:page",controllers.SearchArticle)
+		auth.GET("/batch/index/:page",controllers.ShowUnbindBatchIndex)
+		auth.POST("/create_unbind_batch",controllers.CreateUnbindBatch)
+		auth.GET("/show_unbind_batch/:unbind_batch_id",controllers.ShowUnbindBatch)
+		auth.POST("/new_sim_card/:unbind_batch_id",controllers.NewSimCard)
+		auth.GET("/delete_sim_card/:unbind_batch_id/:sim_card_id",controllers.DeleteSimCard)
+		auth.POST("/update_unbind_batch_status/:unbind_batch_id",controllers.UpdateUnbindBatchStatus)
+		auth.GET("/delete_unbind_batch/:unbind_batch_id",controllers.DeleteUnbindBatch)
+		auth.GET("/export_data/:unbind_batch_id",controllers.ExportData)
 
 	}
 	router.Run(":8080")
@@ -73,6 +89,8 @@ func setTemplate(engine *gin.Engine) {
 		"truncate":   helpers.Truncate,
 		"replaceHtml": helpers.ReplaceHtml,
 		"getUser": helpers.GetUserByComment,
+		"safeURL": helpers.SafeURL,
+		"Test": helpers.Test,
 	}
 
 	engine.SetFuncMap(funcMap)

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解绑批次列表</title>
+    <link href="/static/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/blog_hone.css" rel="stylesheet">
+    <link href="/static/css/base.css" rel="stylesheet">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+    </script>
+    <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        $('#exampleModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // 触发事件的按钮
+        })
+    </script>
+{{/*    <script>*/}}
+{{/*        var pageCount = {{.pageCount}};*/}}
+{{/*        var currentPage = {{.current_page}};*/}}
+{{/*        page_type = {{.page_type}}*/}}
+{{/*            key_word = {{.key_word}}*/}}
+{{/*    </script>*/}}
+    <!-- 分页 -->
+{{/*    <script src="/static/js/index_articles.js"></script>*/}}
+</head>
+<body>
+
+{{template "navbar.html" .}}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal">新增解绑批次
+            </button>
+            <br/><br/>
+            <table class="table table-hover">
+                <h3>解绑批次列表</h3>
+                <thead>
+                <tr>
+                    <th>运营商</th>
+                    <th>提交时间</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {{range $postkey,$postvalue:=.unbind_batchs}}
+                    {{$carrier := $postvalue.FindCarrierByUnbindBatch}}
+                    <tr>
+                        <td>{{$carrier.Name}}</td>
+                        <td>{{dateFormat $postvalue.CreatedAt "2006-01-02-15:04"}}</td>
+                        <td>{{$postvalue.UnbindBatchStatusDisplay}}</td>
+                        <td>
+                            <a href="/show_unbind_batch/{{$postvalue.ID}}" role="button" class = "btn btn-default btn-xs">编辑</a>
+                            <a onclick="javascript:if (confirm('确定删除吗？')) { return true;}else{return false;};" href="/delete_unbind_batch/{{$postvalue.ID}}" role="button" class = "btn btn-default btn-xs">删除</a>
+                        </td>
+                    </tr>
+                {{end}}
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="col-md-4">
+            <div class="well">
+                <h5><span class="glyphicon glyphicon-tag"></span> 运营商种类</h5>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <ul class="list-unstyled">
+                            {{range .carriers}}
+                                <li><a href="/carrier/{{.ID}}">{{.Name}}</a>
+                                </li>
+                            {{end}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav aria-label="Page navigation">
+        <ul id = "index_article_page" class="pagination">
+        </ul>
+    </nav>
+    <br/>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">新增解绑批次</h4>
+            </div>
+            <form action="/create_unbind_batch" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <span>请选择标签</span>
+                        <select class="form-control" style="width:50%;" name = "carrier_name" >
+                            {{range .carriers}}
+                                <option value ="{{.ID}}">{{.Name}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <span>请选择状态</span>
+                        <select class="form-control" style="width:50%;" name = "batch_status" >
+                            <option value ="pending">待提交运营商</option>
+                            <option value ="processing">已提交运营商</option>
+                            <option value ="success">运营商已完成</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+{{template "foot.html" .}}
+</body>
+</html>

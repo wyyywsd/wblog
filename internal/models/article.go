@@ -73,7 +73,7 @@ func PublicArticleLimit(page int,articleCount int)([]*Article , error){
 	var articles []*Article
 	var err error
 
-	err = db.W_Db.Limit(articleCount).Offset((page-1)*articleCount).Where("is_public = ?", true).Find(&articles).Error
+	err = db.W_Db.Limit(articleCount).Offset((page-1)*articleCount).Where("deleted_at IS NULL and is_public = ?", true).Find(&articles).Error
 
 	return articles,err
 }
@@ -139,3 +139,59 @@ func UserArticleCount(user_id uint)int{
 	fmt.Println("******************************************************************",count)
 	return count
 }
+
+func (article Article)FindUserIsCollect(user User) bool{
+	var user_is_collect bool
+	var count int
+	db.W_Db.Table("collects").Where("deleted_at IS NULL and  is_collect = ? and article_id = ? and user_id = ?", true,article.ID,user.ID).Count(&count)
+	if count > 0{
+		user_is_collect = true
+	}else{
+		user_is_collect = false
+	}
+	return user_is_collect
+}
+
+//分页显示当前用户收藏的文章
+func FindUserCollectArticles(user_id uint,articleCount int,page int)([]*Article,error){
+	var articles []*Article
+	var err error
+	var collects []*Collect
+
+	err = db.W_Db.Limit(articleCount).Offset((page-1)*articleCount).Where("deleted_at IS NULL and  user_id = ? and is_collect = ?", user_id,true).Find(&collects).Error
+	for _,collect := range collects{
+		article_temp := FindArticleById(fmt.Sprint(collect.ArticleID))
+		articles = append(articles,&article_temp)
+	}
+	return articles,err
+}
+
+//获取用户收藏的文章的总数量
+func UserCollectArticlesCount(user_id uint)int{
+	var count int
+	db.W_Db.Table("collects").Where("deleted_at IS NULL and  user_id = ? and is_collect = ?", user_id,true).Count(&count)
+	return count
+}
+
+//根据文章标题或者内容搜索文章
+func FindArticleByKeyWord(key_word string,page int,articleCount int,is_public bool,user_id uint)([]*Article,error){
+		var articles []*Article
+		var err error
+		//or article_content LIKE ?
+
+		err = db.W_Db.Limit(articleCount).Offset((page-1)*articleCount).Where("deleted_at IS NULL").
+			Where("  is_public = ? or (user_id =? and is_public = false)",is_public,user_id).
+			Where("article_title LIKE ? or article_content LIKE ?","%"+key_word+"%","%"+key_word+"%").Find(&articles).Error
+
+		return articles,err
+}
+
+func KeyWordArticleCount(key_word string,is_public bool,user_id uint)int{
+	var count int
+	db.W_Db.Table("articles").Where("deleted_at IS NULL").
+		Where("  is_public = ? or (user_id =? and is_public = false)",is_public,user_id).
+		Where("article_title LIKE ? or article_content LIKE ?","%"+key_word+"%","%"+key_word+"%").Count(&count)
+	return count
+}
+
+

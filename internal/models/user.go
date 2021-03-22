@@ -22,7 +22,7 @@ type User struct {
 	IsAdmin bool `gorm:"default:false"`
 	GithubUrl  string
 	Articles     []*Article    `gorm:"ForeignKey:UserID;"`
-	Comments     []*Comment    `gorm:"ForeignKey:UserID;"`
+	Comments     []*Comment    `或者cgorm:"ForeignKey:UserID;"`
 	UserFriends  []*UserFriend `gorm:"ForeignKey:UserId"`
 }
 func UpdateUser(user User,update_map map[string]interface{}) error{

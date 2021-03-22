@@ -8,11 +8,23 @@
         }
         var pageCount = {{.pageCount}};
         var currentPage = {{.current_page}};
+        //ajax请求 点赞评论
+        //分页按钮跳转
+        function like_comment(comment_id,is_zan){
+            alert(currentPage)
+            $.ajaxSetup({cache: false});
+            var url = "/like_comment/"+comment_id+"/"+currentPage+"/"+is_zan
+            //alert("点赞成功"+url)
+            $.ajax({url:url,success:function(result){
+                    $("#article_comments").html(result);
+                }});
+        }
     </script>
     <!-- 分页 -->
     <script src="/static/js/comments.js"></script>
     <div class = "row">
     {{$article_user_id := .article_user_id}}
+    {{$current_user := .current_user}}
     {{range $postkey,$postvalue:=.comments}}
         <!-- 获取该评论的用户对象 -->
         {{$comment_user := getUser $postvalue.UserId}}
@@ -33,8 +45,21 @@
         </div>
         <div class="col-md-11" style="margin-left: 50px" >
             <h4>{{$postvalue.CommentContent}}</h4>
+            <!-- 这个参数用于判断用户是否点赞过这条评论 -->
+            {{$user_is_zan := $postvalue.FindUserIsZan $current_user}}
+            <span id = "like_comment_span" style="color: #8c8c8c;">
+                {{if $user_is_zan}}
+                    <span id = "like_comment" style="cursor:pointer;" onclick = "like_comment({{$postvalue.ID}},false)">已赞{{$postvalue.FindTrueZansCountByComment}}</span>
+                {{else}}
+                    <span id = "like_comment" style="cursor:pointer;" onclick = "like_comment({{$postvalue.ID}},true)">赞{{$postvalue.FindTrueZansCountByComment}}</span>
+                {{end}}
+
+                &nbsp;
+                评论
+            </span>
             <hr/>
         </div>
+
 
 
     {{end}}
@@ -45,4 +70,5 @@
             <!-- 通过jquery 添加-->
         </ul>
     </nav>
+    <br/>
 {{end}}

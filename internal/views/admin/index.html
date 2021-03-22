@@ -13,6 +13,8 @@
     <script>
         var pageCount = {{.pageCount}};
         var currentPage = {{.current_page}};
+        page_type = {{.page_type}}
+        key_word = {{.key_word}}
     </script>
     <!-- 分页 -->
     <script src="/static/js/index_articles.js"></script>
@@ -83,6 +85,7 @@
         <ul id = "index_article_page" class="pagination">
         </ul>
     </nav>
+    <br/>
 </div>
 {{template "foot.html" .}}
 </body>

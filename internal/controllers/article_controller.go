@@ -125,3 +125,36 @@ func DeleteArticle(context *gin.Context){
 	db.W_Db.Delete(current_article)
 	context.Redirect(http.StatusMovedPermanently, "/user/"+fmt.Sprint(current_user_name)+"")
 }
+
+func CollectArticle(context *gin.Context) {
+	article_id := context.Param("id")
+	is_collect_s := context.Param("is_collect")
+	article := models.FindArticleById(article_id)
+	article_user,_:= models.FindUserByArticle(&article)
+	session := sessions.Default(context)
+	current_user_name := session.Get("sessionid")
+	current_user,_,_ := models.FindUserByUserName(fmt.Sprint(current_user_name))
+	collect,existsCollect,_ := models.FindCollectByUserIdAndArticleId(current_user.ID,article.ID)
+	is_collect := true
+	if is_collect_s == "false"{
+		is_collect = false
+	}
+	if existsCollect{
+		//更新
+		models.UpdateCollect(collect,is_collect)
+	}else{
+		//新增
+		models.CreateCollect(current_user.ID,article.ID,is_collect)
+	}
+
+	//context.Redirect(http.StatusMovedPermanently, "/article/"+article_id+"/")
+
+	context.HTML(200, "_show_is_collect.html", gin.H{
+		"article":    article,
+		"current_user": current_user,
+		"user_session": current_user_name,
+		"article_user": article_user,
+	})
+
+}
+

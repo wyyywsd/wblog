@@ -1,10 +1,10 @@
-{{define "_user_articles.html"}}
+{{define "_user_collect_articles.html"}}
     <script>
         var pageCount = {{.pageCount}};
         var currentPage = {{.current_page}};
     </script>
     <!-- 分页 -->
-    <script src="/static/js/user_articles.js"></script>
+    <script src="/static/js/user_collect_articles.js"></script>
     <section class="article">
         {{range $postkey,$postvalue:=.articles}}
             <div class="articleInfo">
@@ -44,13 +44,13 @@
         {{end}}
     </section>
     <nav aria-label="Page navigation">
-        <ul id = "user_article_page" class="pagination">
+        <ul id = "user_collect_article_page" class="pagination">
             <!-- 通过jquery 添加-->
         </ul>
     </nav>
-        <br/>
-<script>
+    <br/>
+    <script>
 
-</script>
+    </script>
 
 {{end}}
