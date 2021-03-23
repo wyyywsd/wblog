@@ -142,11 +142,14 @@ func NewSimCard(context *gin.Context){
 	replace_reason := context.PostForm("replace_reason")
 	equipment_photo := context.PostForm("image_base64")
 	//原本是图片直接用base64存入数据库 ， 现改为地址 ， 减少数据库的压力
-	_,file_name := WriteFile("file", equipment_photo)
+	_,file_name_s := WriteFile("file", equipment_photo)
 	//fmt.Println(equipment_photo)
-
+	file_name := ""
+	if file_name_s != ""{
+		file_name = "/file"+file_name_s
+	}
 	ubind_batch_id,_ := strconv.Atoi(unbind_batch_id_string)
-	models.CreateSimCards(agent_name,iccid,msisdn,uint(ubind_batch_id),replace_reason,"/file"+file_name)
+	models.CreateSimCards(agent_name,iccid,msisdn,uint(ubind_batch_id),replace_reason,file_name)
 	context.Redirect(http.StatusMovedPermanently, "/show_unbind_batch/"+unbind_batch_id_string+"")
 }
 
