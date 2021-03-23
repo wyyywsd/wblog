@@ -29,7 +29,7 @@
 {{template "navbar.html" .}}
 <div class="container">
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal">新增解绑批次
             </button>
             <br/><br/>
@@ -61,21 +61,7 @@
 
         </div>
 
-        <div class="col-md-4">
-            <div class="well">
-                <h5><span class="glyphicon glyphicon-tag"></span> 运营商种类</h5>
-                <div class="row">
-                    <div class="col-lg-6">
-                        <ul class="list-unstyled">
-                            {{range .carriers}}
-                                <li><a href="/carrier/{{.ID}}">{{.Name}}</a>
-                                </li>
-                            {{end}}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </div>
 
     <nav aria-label="Page navigation">

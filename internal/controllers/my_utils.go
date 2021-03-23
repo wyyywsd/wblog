@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
@@ -9,14 +10,22 @@ import (
 	"github.com/spf13/viper"
 	"gorm_demo/internal/models"
 	"io/ioutil"
+	"log"
+	"math/rand"
 	"net/http"
 	"net/url"
+	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
+	"time"
+	_"image/gif"
+	_ "image/jpeg"
+	_ "image/png"
 )
 //分页的数量
-const batchCount int = 8
+const batchCount int = 100
 //跳转到图片识别界面
 func PictureRecognition(context *gin.Context){
 	session := sessions.Default(context)
@@ -132,10 +141,62 @@ func NewSimCard(context *gin.Context){
 	unbind_batch_id_string := context.Param("unbind_batch_id")
 	replace_reason := context.PostForm("replace_reason")
 	equipment_photo := context.PostForm("image_base64")
-	fmt.Println(equipment_photo)
+	//原本是图片直接用base64存入数据库 ， 现改为地址 ， 减少数据库的压力
+	_,file_name := WriteFile("file", equipment_photo)
+	//fmt.Println(equipment_photo)
+
 	ubind_batch_id,_ := strconv.Atoi(unbind_batch_id_string)
-	models.CreateSimCards(agent_name,iccid,msisdn,uint(ubind_batch_id),replace_reason,equipment_photo)
+	models.CreateSimCards(agent_name,iccid,msisdn,uint(ubind_batch_id),replace_reason,"/file"+file_name)
 	context.Redirect(http.StatusMovedPermanently, "/show_unbind_batch/"+unbind_batch_id_string+"")
+}
+
+//base64 图片解码存入服务器
+func  WriteFile(path string, base64_image_content string) (bool,string) {
+	fmt.Println("第一步成功")
+	b, _ := regexp.MatchString(`^data:\s*image\/(\w+);base64,`, base64_image_content)
+	if !b {
+		return false,""
+	}
+	re, _ := regexp.Compile(`^data:\s*image\/(\w+);base64,`)
+
+	allData := re.FindAllSubmatch([]byte(base64_image_content), 2)
+	fmt.Println(allData)
+	fileType := string(allData[0][1]) //png ，jpeg 后缀获取
+	fmt.Println(fileType)
+	base64Str := re.ReplaceAllString(base64_image_content, "")
+	//fmt.Println(base64Str)
+	date := time.Now().Format("2006-01-02")
+	if ok := IsFileExist(path + "/" + date); !ok {
+		os.Mkdir(path+"/unbind_picture/"+date, 0666)
+	}
+	curFileStr := strconv.FormatInt(time.Now().UnixNano(), 10)
+
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	n := r.Intn(99999)
+	file_name := "/unbind_picture/" + date + "/" + curFileStr + strconv.Itoa(n) + "." + fileType
+	file  := path + file_name
+	fmt.Println(file)
+	byte, _ := base64.StdEncoding.DecodeString(base64Str)
+
+	err := ioutil.WriteFile(file, byte, 0666)
+	if err != nil {
+		fmt.Println("============================================================")
+		log.Println(err)
+		fmt.Println("============================================================")
+	}
+
+	return false,file_name
+
+}
+//判断文件是否存在
+
+func IsFileExist(filename string) bool {
+	_, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return true
+
 }
 
 func DeleteSimCard(context *gin.Context){
@@ -178,10 +239,10 @@ func ExportData(context *gin.Context) {
 	//创建一个切片 里面存的是map  用于把最终信息保存下来，遍历写到表格中
 	var data [](map[string]string)
 	//表格表头
-	titles := map[string]string{"A1": "iccid", "B1": "msisdn"}
+	titles := map[string]string{"A1": "iccid", "B1": "msisdn","C1":"图片"}
 	//创建一个切片 用于对无序的map进行有序的输出
 	var list_for_map_in_order []string
-	list_for_map_in_order = append(list_for_map_in_order, "iccid", "msisdn")
+	list_for_map_in_order = append(list_for_map_in_order, "iccid", "msisdn","picture")
 	for key, value := range titles {
 		f.SetCellValue("Sheet1", key, value)
 	}
@@ -212,8 +273,6 @@ func ExportData(context *gin.Context) {
 	context.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
 	context.Writer.Header().Add("Content-Type", "application/msexcel")
 	context.File(filepath)
-
-
 }
 
 func QuerySimCardData_Wangzq(sim_cards chan *models.SimCard, wg *sync.WaitGroup, lock *sync.Mutex, data *[](map[string]string)) {
@@ -223,22 +282,51 @@ func QuerySimCardData_Wangzq(sim_cards chan *models.SimCard, wg *sync.WaitGroup,
 		data_item := map[string]string{}
 		data_item["iccid"] = sim_card.Iccid
 		data_item["msisdn"] = sim_card.Msisdn
+		data_item["picture"] = sim_card.EquipmentPhoto
 		//将数据存入data中
 		lock.Lock()
 		*data = append(*data, data_item)
 		fmt.Printf("记录了%s次数据\n", "***")
 		lock.Unlock()
 	}
-
 }
 
 //表格写入方法
 func DoExcel(list_for_map_in_order *[]string, b int, f *excelize.File, data *[](map[string]string)) {
+	//这个参数 临时用来判断 前一个卡号是否有图片添加，  如果有  图片后面的卡号  往下移动几行 再写入
+	pic_temp := 0
 	for _, dataa := range *data {
 		a := 1
 		for _, key := range *list_for_map_in_order {
 			col, _ := excelize.ColumnNumberToName(a)
-			f.SetCellValue("Sheet1", col+strconv.Itoa(b), dataa[key])
+			if key == "picture"{
+				fmt.Println("进入图片这里了")
+				if dataa[key] == ""{
+					//到这里证明是写入卡号了 设置成0
+					pic_temp = 0
+					break
+				}
+				fmt.Println(dataa[key])
+				reg1 := regexp.MustCompile(`file\/unbind_picture.*`)
+				file_name := reg1.FindAllStringSubmatch(dataa[key], -1)
+				fmt.Println(file_name[0])
+				fmt.Println(b)
+				if err := f.AddPicture("Sheet1", col+strconv.Itoa(b), file_name[0][0], `{
+        			"x_scale": 0.1,
+        			"y_scale": 0.1
+    			}`); err != nil {
+					fmt.Println(err)
+				}
+				//到了这里证明  是添加了图片的 设置值为1
+				pic_temp = 1
+			}else{
+				if pic_temp == 1{
+					b+=5
+				}
+				f.SetCellValue("Sheet1", col+strconv.Itoa(b), dataa[key])
+				//到这里证明是写入卡号了 设置成0
+				pic_temp = 0
+			}
 			a++
 		}
 		b++

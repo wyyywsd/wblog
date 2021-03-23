@@ -52,7 +52,7 @@ func UpdateUser(context *gin.Context) {
 		filename_slice := strings.Split(filename, ".")
 		le := len(filename_slice) -1
 		filename = fmt.Sprint(current_user.ID)+"."+filename_slice[le]
-		out, err := os.Create("public/" + filename)
+		out, err := os.Create("file/" + filename)
 		if err != nil {
 			log.Fatal(err)
 		}

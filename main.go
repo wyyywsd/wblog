@@ -46,7 +46,7 @@ func main() {
 	router.GET("/index/:page",controllers.ArticlePageIndex)
 	router.GET("/label/:id",controllers.Show_Article_By_Label)
 
-	router.StaticFS("/file", http.Dir("public"))
+	router.StaticFS("/file", http.Dir("file"))
 	auth := router.Group("")
 	auth.Use(controllers.AuthRequiredSession())
 	{

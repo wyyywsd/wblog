@@ -2,3 +2,4 @@ gorm_demo
 config/config.yaml
 .idea
 
+file/*
