@@ -29,7 +29,8 @@
             </button>
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal2">修改批次状态
             </button>
-            <a href="/export_data/{{.unbind_batch.ID}}" role="button" class = "btn btn-default">导出卡号为excel</a>
+            <a href="/export_data_excel/{{.unbind_batch.ID}}" role="button" class = "btn btn-default">导出卡号为excel</a>
+            <a href="/export_data_txt/{{.unbind_batch.ID}}" role="button" class = "btn btn-default">导出卡号为txt</a>
             <br/><br/>
             <table class="table table-hover">
                 <h3>{{.carrier.Name}}--本批次卡号列表</h3>
@@ -150,7 +151,7 @@
                         <select class="form-control" style="width:100%;" name = "batch_status" >
                             <option value ="pending" id = "pending">待提交运营商</option>
                             <option value ="processing" id = "processing">已提交运营商</option>
-                            <option value ="success" id = "success">运营商已完成</option>
+                            <option value ="success" id = "success">已完成</option>
                         </select>
                     </div>
                 </div>

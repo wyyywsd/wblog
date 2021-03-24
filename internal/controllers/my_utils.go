@@ -25,7 +25,7 @@ import (
 	_ "image/png"
 )
 //分页的数量
-const batchCount int = 100
+const batchCount int = 10
 //跳转到图片识别界面
 func PictureRecognition(context *gin.Context){
 	session := sessions.Default(context)
@@ -89,11 +89,21 @@ func ShowUnbindBatchIndex(context *gin.Context){
 	current_user,_,_:= models.FindUserByUserName(fmt.Sprint(current_user_name))
 	//获取所有的批次
 	unbind_batchs,_ := models.FindUnbindBatchByPage(batchCount,page)
+
+	//获取一共有多少文章
+	count := models.UnbindCount()
+	//通过文章的数量 算出分页一共有多少页   如果有余数  就加一
+	pageCount := count/batchCount
+	if count%batchCount != 0{
+		pageCount = (count/batchCount)+1
+	}
 	context.HTML(200,"unbind_batch.html",gin.H{
 		"carriers": carriers,
 		"current_user": current_user,
 		"user_session": current_user_name,
 		"unbind_batchs": unbind_batchs,
+		"pageCount": pageCount,
+		"current_page": page,
 	})
 }
 
@@ -229,8 +239,12 @@ func DeleteUnbindBatch(context *gin.Context){
 }
 
 
-func ExportData(context *gin.Context) {
-
+func ExportDataExcel(context *gin.Context) {
+	unbind_batch_id_string := context.Param("unbind_batch_id")
+	unbind_batch_id, _ := strconv.Atoi(unbind_batch_id_string)
+	fmt.Println("进来了")
+	unbind_batch,_ := models.FindUnbindBatchById(uint(unbind_batch_id))
+	carrier := unbind_batch.FindCarrierByUnbindBatch()
 	sim_cards_chan := make(chan *models.SimCard, 40)
 	var wg sync.WaitGroup
 	wg.Add(2)
@@ -242,22 +256,27 @@ func ExportData(context *gin.Context) {
 	//创建一个切片 里面存的是map  用于把最终信息保存下来，遍历写到表格中
 	var data [](map[string]string)
 	//表格表头
-	titles := map[string]string{"A1": "iccid", "B1": "msisdn","C1":"图片"}
+	titles := map[string]string{}
 	//创建一个切片 用于对无序的map进行有序的输出
 	var list_for_map_in_order []string
-	list_for_map_in_order = append(list_for_map_in_order, "iccid", "msisdn","picture")
+	//用做判断， 无锡移动目前 解绑需要提供设备照片 ，所以单独判断  如果是无锡移动导出卡号，就导出图片  如果后续有其他运营商需要提供设备照片， 再修改这里的判断逻辑
+	if carrier.Name == "无锡移动"{
+		titles = map[string]string{"A1": "iccid", "B1": "msisdn","C1":"图片"}
+		list_for_map_in_order = append(list_for_map_in_order, "iccid", "msisdn","picture")
+	}else{
+		titles = map[string]string{"A1": "iccid", "B1": "msisdn"}
+		list_for_map_in_order = append(list_for_map_in_order, "iccid", "msisdn")
+	}
+
 	for key, value := range titles {
 		f.SetCellValue("Sheet1", key, value)
 	}
 	//调用方法 去查询对应的卡号数据  把文件写入data中
 	for i := 0; i < 2; i++ {
-		go QuerySimCardData_Wangzq(sim_cards_chan, &wg, &lock, &data)
+		go QuerySimCardData_Wangzq(sim_cards_chan, &wg, &lock, &data,carrier)
 	}
 
-	unbind_batch_id_string := context.Param("unbind_batch_id")
-	unbind_batch_id, _ := strconv.Atoi(unbind_batch_id_string)
-	fmt.Println("进来了")
-	unbind_batch,_ := models.FindUnbindBatchById(uint(unbind_batch_id))
+
 	//取到simcard数据 传入信道中
 	sim_cardss,_ := models.FindSimCardsByUnbindBatch(unbind_batch)
 	for _, sim_card := range sim_cardss {
@@ -278,14 +297,17 @@ func ExportData(context *gin.Context) {
 	context.File(filepath)
 }
 
-func QuerySimCardData_Wangzq(sim_cards chan *models.SimCard, wg *sync.WaitGroup, lock *sync.Mutex, data *[](map[string]string)) {
+func QuerySimCardData_Wangzq(sim_cards chan *models.SimCard, wg *sync.WaitGroup, lock *sync.Mutex, data *[](map[string]string),carrier models.Carrier) {
 	fmt.Println("进来了2")
 	defer wg.Done()
 	for sim_card := range sim_cards {
 		data_item := map[string]string{}
 		data_item["iccid"] = sim_card.Iccid
 		data_item["msisdn"] = sim_card.Msisdn
-		data_item["picture"] = sim_card.EquipmentPhoto
+		//用做判断， 无锡移动目前 解绑需要提供设备照片 ，所以单独判断  如果是无锡移动导出卡号，就导出图片  如果后续有其他运营商需要提供设备照片， 再修改这里的判断逻辑
+		if carrier.Name == "无锡移动"{
+			data_item["picture"] = sim_card.EquipmentPhoto
+		}
 		//将数据存入data中
 		lock.Lock()
 		*data = append(*data, data_item)
@@ -335,4 +357,30 @@ func DoExcel(list_for_map_in_order *[]string, b int, f *excelize.File, data *[](
 		b++
 		fmt.Printf("执行了%d次\n", b)
 	}
+}
+
+
+func ExportDataTxt(context *gin.Context){
+	unbind_batch_id_string := context.Param("unbind_batch_id")
+	unbind_batch_id, _ := strconv.Atoi(unbind_batch_id_string)
+	fmt.Println("进来了")
+	unbind_batch,_ := models.FindUnbindBatchById(uint(unbind_batch_id))
+	filename:=unbind_batch.FindCarrierByUnbindBatch().Name+"解绑.txt"
+	filepath:="/Users/mac/Desktop/解绑专用/"+filename
+
+	f, err := os.OpenFile(filepath, os.O_CREATE|os.O_WRONLY, 0666)
+	defer f.Close()
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		sim_cards,_ := models.FindSimCardsByUnbindBatch(unbind_batch)
+		for _,sim_card := range sim_cards{
+			f.Write([]byte(sim_card.Msisdn+"\r\n"))
+		}
+
+	}
+	context.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	context.Writer.Header().Add("Content-Type", "application/txt")
+	context.File(filepath)
+
 }

@@ -15,14 +15,12 @@
             var button = $(event.relatedTarget) // 触发事件的按钮
         })
     </script>
-{{/*    <script>*/}}
-{{/*        var pageCount = {{.pageCount}};*/}}
-{{/*        var currentPage = {{.current_page}};*/}}
-{{/*        page_type = {{.page_type}}*/}}
-{{/*            key_word = {{.key_word}}*/}}
-{{/*    </script>*/}}
+    <script>
+        var pageCount = {{.pageCount}};
+        var currentPage = {{.current_page}};
+    </script>
     <!-- 分页 -->
-{{/*    <script src="/static/js/index_articles.js"></script>*/}}
+    <script src="/static/js/unbind_index.js"></script>
 </head>
 <body>
 
@@ -65,7 +63,7 @@
     </div>
 
     <nav aria-label="Page navigation">
-        <ul id = "index_article_page" class="pagination">
+        <ul id = "index_unbind_page" class="pagination">
         </ul>
     </nav>
     <br/>
@@ -94,7 +92,7 @@
                         <select class="form-control" style="width:50%;" name = "batch_status" >
                             <option value ="pending">待提交运营商</option>
                             <option value ="processing">已提交运营商</option>
-                            <option value ="success">运营商已完成</option>
+                            <option value ="success">已完成</option>
                         </select>
                     </div>
                 </div>

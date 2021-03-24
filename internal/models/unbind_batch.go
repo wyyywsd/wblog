@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"gorm_demo/internal/db"
 )
@@ -39,7 +40,7 @@ func (unbind_batch *UnbindBatch) UnbindBatchStatusDisplay() string{
 	}else if (unbind_batch.Status == "processing"){
 		status = "已提交运营商"
 	}else if (unbind_batch.Status == "success"){
-		status = "运营商已完成"
+		status = "已完成"
 	}
 	return status
 
@@ -62,4 +63,13 @@ func DeleteUnbindBatchById(id uint){
 	var unbind_batch UnbindBatch
 	db.W_Db.Where("deleted_at IS NULL and id = ?",id).First(&unbind_batch)
 	db.W_Db.Delete(&unbind_batch)
+}
+
+
+func UnbindCount()int{
+	var count int
+	db.W_Db.Table("unbind_batches").Where("deleted_at IS NULL").Count(&count)
+
+	fmt.Println("******************************************************************",count)
+	return count
 }

@@ -76,7 +76,8 @@ func main() {
 		auth.GET("/delete_sim_card/:unbind_batch_id/:sim_card_id",controllers.DeleteSimCard)
 		auth.POST("/update_unbind_batch_status/:unbind_batch_id",controllers.UpdateUnbindBatchStatus)
 		auth.GET("/delete_unbind_batch/:unbind_batch_id",controllers.DeleteUnbindBatch)
-		auth.GET("/export_data/:unbind_batch_id",controllers.ExportData)
+		auth.GET("/export_data_excel/:unbind_batch_id",controllers.ExportDataExcel)
+		auth.GET("/export_data_txt/:unbind_batch_id",controllers.ExportDataTxt)
 
 	}
 	router.Run(":8080")
