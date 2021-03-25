@@ -11,31 +11,35 @@
     <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
     <script>
         //ajax跳转 显示用户的文章
-        $(document).ready(function(){
-            $("#show_user_articles").click(function(){
-                $.ajax({url:"/show_user_articles/1",success:function(result){
+        $(document).ready(function () {
+            $("#show_user_articles").click(function () {
+                $.ajax({
+                    url: "/show_user_articles/1", success: function (result) {
                         $("#div1").html(result);
-                    }});
+                    }
+                });
             });
         });
 
         //ajax跳转 显示用户收藏的文章
-        $(document).ready(function(){
-            $("#show_user_collect_articles").click(function(){
-                $.ajax({url:"/show_user_collect_articles/1",success:function(result){
+        $(document).ready(function () {
+            $("#show_user_collect_articles").click(function () {
+                $.ajax({
+                    url: "/show_user_collect_articles/1", success: function (result) {
                         $("#div1").html(result);
-                    }});
+                    }
+                });
             });
         });
 
-        $(document).ready(function(){
-            $("#show_user_articles").click(function(){
-                $("#show_user_articles_li").attr("class","active");
-                $("#show_user_collect_articles_li").attr("class","");
+        $(document).ready(function () {
+            $("#show_user_articles").click(function () {
+                $("#show_user_articles_li").attr("class", "active");
+                $("#show_user_collect_articles_li").attr("class", "");
             });
-            $("#show_user_collect_articles").click(function(){
-                $("#show_user_collect_articles_li").attr("class","active");
-                $("#show_user_articles_li").attr("class","");
+            $("#show_user_collect_articles").click(function () {
+                $("#show_user_collect_articles_li").attr("class", "active");
+                $("#show_user_articles_li").attr("class", "");
             });
         });
     </script>
@@ -46,7 +50,8 @@
     <div class="row ">
         <div class="col-md-8">
             <div class="col-md-2 ">
-                <img src="{{.current_user.ProfilePhoto}}" alt="..." class="img-circle" data-toggle="dropdown" style="width: 80px;height: 80px;">
+                <img src="{{.current_user.ProfilePhoto}}" alt="..." class="img-circle" data-toggle="dropdown"
+                     style="width: 80px;height: 80px;">
             </div>
             <div class="col-md-6">
                 <h3>{{.current_user.Username}}</h3>
@@ -60,12 +65,16 @@
 <div class="container">
     <div class="row ">
         <div class="col-md-10">
-           <br/>
-            <ul class="nav nav-tabs" id = "1222">
-                <li role="presentation" class="active" id = "show_user_articles_li"><a id = "show_user_articles" style="cursor:pointer;">我的文章</a></li>
+            <br/>
+            <ul class="nav nav-tabs" id="1222">
+                <li role="presentation" class="active" id="show_user_articles_li"><a id="show_user_articles"
+                                                                                     style="cursor:pointer;">我的文章</a>
+                </li>
                 <li role="presentation"><a href="#">我的动态</a></li>
                 <li role="presentation"><a href="#">最新评论</a></li>
-                <li role="presentation" class="" id = "show_user_collect_articles_li"><a id = "show_user_collect_articles" style="cursor:pointer;">我的收藏</a></li>
+                <li role="presentation" class="" id="show_user_collect_articles_li"><a id="show_user_collect_articles"
+                                                                                       style="cursor:pointer;">我的收藏</a>
+                </li>
             </ul>
             <br/>
             <div class="col-md-10">

@@ -49,8 +49,10 @@
                         <td>{{dateFormat $postvalue.CreatedAt "2006-01-02-15:04"}}</td>
                         <td>{{$postvalue.UnbindBatchStatusDisplay}}</td>
                         <td>
-                            <a href="/show_unbind_batch/{{$postvalue.ID}}" role="button" class = "btn btn-default btn-xs">编辑</a>
-                            <a onclick="javascript:if (confirm('确定删除吗？')) { return true;}else{return false;};" href="/delete_unbind_batch/{{$postvalue.ID}}" role="button" class = "btn btn-default btn-xs">删除</a>
+                            <a href="/show_unbind_batch/{{$postvalue.ID}}" role="button" class="btn btn-default btn-xs">编辑</a>
+                            <a onclick="javascript:if (confirm('确定删除吗？')) { return true;}else{return false;};"
+                               href="/delete_unbind_batch/{{$postvalue.ID}}" role="button"
+                               class="btn btn-default btn-xs">删除</a>
                         </td>
                     </tr>
                 {{end}}
@@ -63,7 +65,7 @@
     </div>
 
     <nav aria-label="Page navigation">
-        <ul id = "index_unbind_page" class="pagination">
+        <ul id="index_unbind_page" class="pagination">
         </ul>
     </nav>
     <br/>
@@ -81,24 +83,24 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <span>请选择标签</span>
-                        <select class="form-control" style="width:50%;" name = "carrier_name" >
+                        <select class="form-control" style="width:50%;" name="carrier_name">
                             {{range .carriers}}
-                                <option value ="{{.ID}}">{{.Name}}</option>
+                                <option value="{{.ID}}">{{.Name}}</option>
                             {{end}}
                         </select>
                     </div>
                     <div class="form-group">
                         <span>请选择状态</span>
-                        <select class="form-control" style="width:50%;" name = "batch_status" >
-                            <option value ="pending">待提交运营商</option>
-                            <option value ="processing">已提交运营商</option>
-                            <option value ="success">已完成</option>
+                        <select class="form-control" style="width:50%;" name="batch_status">
+                            <option value="pending">待提交运营商</option>
+                            <option value="processing">已提交运营商</option>
+                            <option value="success">已完成</option>
                         </select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="submit" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
                 </div>
             </form>
         </div>

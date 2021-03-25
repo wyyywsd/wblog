@@ -9,7 +9,7 @@
     <link href="/static/css/base.css" rel="stylesheet">
     <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/static/js/wangEditor.min.js" type="text/javascript" ></script>
+    <script src="/static/js/wangEditor.min.js" type="text/javascript"></script>
 </head>
 <body>
 {{/*            <form action="/picture_recognition" enctype="multipart/form-data" method = "post" class="form-horizontal" id = "registerForm"  autocomplete="off">*/}}
@@ -29,18 +29,20 @@
             <br/>
 
 
-
-            <form class="form-horizontal" id = "picture_recognition_id" >
+            <form class="form-horizontal" id="picture_recognition_id">
                 <div class="form-group">
                     <div style="padding: 5px 0; color: #ccc"></div>
                     <h2>请在下方贴入图片，如果有文字或者空格会报错</h2>
-                    <div id="picture_content_text" class="text" >
+                    <div id="picture_content_text" class="text">
 
                     </div>
                     <!-- textarea用来记录文本框中的内容 用来提交到后台，默认隐藏 -->
-                    <textarea  id="picture_content_textarea" name = "picture_64" style="width:100%; height:200px;" hidden></textarea>
+                    <textarea id="picture_content_textarea" name="picture_64" style="width:100%; height:200px;"
+                              hidden></textarea>
 
-                    <button type="button" onclick = "submit_picture_recognition()" id = "get_html"  class="btn btn-default">提交</button>
+                    <button type="button" onclick="submit_picture_recognition()" id="get_html" class="btn btn-default">
+                        提交
+                    </button>
                     <script type="text/javascript">
                         var E = window.wangEditor
                         var editor1 = new E('#picture_content_text')  // 两个参数也可以传入 elem 对象，class 选择器
@@ -56,13 +58,15 @@
 
 
                         //ajax上传数据  返回值显示在well里
-                        function submit_picture_recognition(){
-                            $.ajax({url:"/submit_picture_recognition",
+                        function submit_picture_recognition() {
+                            $.ajax({
+                                url: "/submit_picture_recognition",
                                 method: "post",
                                 data: $('#picture_recognition_id').serialize(), // 序列化form中的值
-                                success:function(result){
+                                success: function (result) {
                                     $("#picture_recognition").html(result);
-                                }});
+                                }
+                            });
                         }
                     </script>
                 </div>
@@ -74,9 +78,9 @@
         <br/>
         <br/>
         <br/>
-        <div class="col-md-4" >
+        <div class="col-md-4">
             文字显示区域
-            <div class="well" style="height: 322px;" id = "picture_recognition">
+            <div class="well" style="height: 322px;" id="picture_recognition">
 
             </div>
 
@@ -84,6 +88,6 @@
     </div>
 
 </div>
-
+{{template "foot.html" .}}
 </body>
 </html>

@@ -1,10 +1,10 @@
-$(document).ready(function(){
-    if (unbind_status == "pending"){
-        $("#pending").attr("selected","selected");
-    }else if(unbind_status == "processing"){
-        $("#processing").attr("selected","selected");
-    }else if(unbind_status == "success"){
-        $("#success").attr("selected","selected");
+$(document).ready(function () {
+    if (unbind_status == "pending") {
+        $("#pending").attr("selected", "selected");
+    } else if (unbind_status == "processing") {
+        $("#processing").attr("selected", "selected");
+    } else if (unbind_status == "success") {
+        $("#success").attr("selected", "selected");
     }
 
     $('#exampleModal').on('show.bs.modal', function (event) {

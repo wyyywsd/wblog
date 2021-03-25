@@ -14,39 +14,43 @@
     <!-- 注册校验 -->
     <script src="/static/js/register.js"></script>
     <style>
-        .error{
+        .error {
             color: #ff0000;
         }
     </style>
 </head>
 <body>
 {{.message}}
-<div class="container" >
+<div class="container">
     <div class="row ">
-        <div class="col-md-12 col-md-offset-2 col-xs-12 col-xs-offset-3"  style="margin-top: 200px; ">
-            <form class="form-horizontal" id = "registerForm" action="/signup" method = "post">
+        <div class="col-md-12 col-md-offset-2 col-xs-12 col-xs-offset-3" style="margin-top: 200px; ">
+            <form class="form-horizontal" id="registerForm" action="/signup" method="post">
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="username" placeholder="请输入用户名" name = "username" style="width: 40%;">
+                        <input type="text" class="form-control" id="username" placeholder="请输入用户名" name="username"
+                               style="width: 40%;">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">密码</label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" id="password" placeholder="请输入密码" name = "password" style="width: 40%;">
+                        <input type="password" class="form-control" id="password" placeholder="请输入密码" name="password"
+                               style="width: 40%;">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">确认密码</label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" id="confirm_password" placeholder="请再次密码" name = "confirm_password" autocomplete="new-password" style="width: 40%;">
+                        <input type="password" class="form-control" id="confirm_password" placeholder="请再次密码"
+                               name="confirm_password" autocomplete="new-password" style="width: 40%;">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">email</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="email" placeholder="请输入邮箱" name = "email" style="width: 40%;">
+                        <input type="email" class="form-control" id="email" placeholder="请输入邮箱" name="email"
+                               style="width: 40%;">
                     </div>
                 </div>
                 <div class="form-group">
@@ -60,8 +64,8 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" id = "submit" class="btn btn-default">注册</button>
-                        <a href="/signin" role="button" class = "btn btn-default">返回登陆</a>
+                        <button type="submit" id="submit" class="btn btn-default">注册</button>
+                        <a href="/signin" role="button" class="btn btn-default">返回登陆</a>
                     </div>
                 </div>
             </form>

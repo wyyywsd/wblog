@@ -2,7 +2,7 @@
 // function back_to_login(){
 //     window.location.href="/signin";
 // }
-$().ready(function() {
+$().ready(function () {
     // 在键盘按下并释放及提交后验证提交表单
     $("#registerForm").validate({
         rules: {

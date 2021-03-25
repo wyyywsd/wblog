@@ -15,7 +15,6 @@ func Truncate(s string, n int) string {
 	return s
 }
 
-
 func ReplaceHtml(article_content string) string {
 	//将HTML标签全转换成小写
 	re, _ := regexp.Compile("\\<[\\S\\s]+?\\>")
@@ -32,14 +31,11 @@ func ReplaceHtml(article_content string) string {
 	//去除连续的换行符
 	re, _ = regexp.Compile("\\s{2,}")
 	article_content = re.ReplaceAllString(article_content, " ")
-
 	return article_content
 
-
 }
 
-func GetUserByComment(user_id uint)models.User{
-	user:= models.FindUserById(fmt.Sprint(user_id))
+func GetUserByComment(user_id uint) models.User {
+	user := models.FindUserById(fmt.Sprint(user_id))
 	return user
 }
-

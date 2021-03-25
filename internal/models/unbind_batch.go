@@ -8,68 +8,66 @@ import (
 
 type UnbindBatch struct {
 	gorm.Model
-	Status string
+	Status    string
 	CarrierId uint
-	SimCards []SimCard
-
+	SimCards  []SimCard
 }
 
-func CreateUnbindBatch(carrier_id uint,status string){
+func CreateUnbindBatch(carrier_id uint, status string) {
 	unbind_batch := UnbindBatch{CarrierId: carrier_id, Status: status}
 	db.W_Db.Create(&unbind_batch)
 }
 
-func FindUnbindBatchByPage(batchCount int,page int)([]*UnbindBatch,error){
+func FindUnbindBatchByPage(batchCount int, page int) ([]*UnbindBatch, error) {
 	var unbind_batchs []*UnbindBatch
 	var err error
-	err = db.W_Db.Limit(batchCount).Offset((page-1)*batchCount).Where("deleted_at IS NULL").Order("created_at desc").Find(&unbind_batchs).Error
+	err = db.W_Db.Limit(batchCount).Offset((page - 1) * batchCount).Where("deleted_at IS NULL").Order("created_at desc").Find(&unbind_batchs).Error
 
-	return unbind_batchs,err
+	return unbind_batchs, err
 }
 
-func (unbind_batch *UnbindBatch) FindCarrierByUnbindBatch()Carrier{
+func (unbind_batch *UnbindBatch) FindCarrierByUnbindBatch() Carrier {
 	var carrier Carrier
 	db.W_Db.Where("deleted_at IS NULL and id = ?", unbind_batch.CarrierId).First(&carrier)
 	return carrier
 }
 
-func (unbind_batch *UnbindBatch) UnbindBatchStatusDisplay() string{
+func (unbind_batch *UnbindBatch) UnbindBatchStatusDisplay() string {
 	var status string
-	if (unbind_batch.Status == "pending"){
+	if unbind_batch.Status == "pending" {
 		status = "待提交运营商"
-	}else if (unbind_batch.Status == "processing"){
+	} else if unbind_batch.Status == "processing" {
 		status = "已提交运营商"
-	}else if (unbind_batch.Status == "success"){
+	} else if unbind_batch.Status == "success" {
 		status = "已完成"
 	}
 	return status
 
 }
 
-func FindUnbindBatchById(id uint) (UnbindBatch,error){
+func FindUnbindBatchById(id uint) (UnbindBatch, error) {
 	var err error
 	var unbind_batch UnbindBatch
-	err = db.W_Db.Where("deleted_at IS NULL and id = ?",id).First(&unbind_batch).Error
-	return unbind_batch,err
+	err = db.W_Db.Where("deleted_at IS NULL and id = ?", id).First(&unbind_batch).Error
+	return unbind_batch, err
 }
 
-func UpdateUnbindBatchStatusById(id uint,status string){
+func UpdateUnbindBatchStatusById(id uint, status string) {
 	var unbind_batch UnbindBatch
-	unbind_batch,_ = FindUnbindBatchById(id)
+	unbind_batch, _ = FindUnbindBatchById(id)
 	db.W_Db.Model(&unbind_batch).Update("status", status)
 }
 
-func DeleteUnbindBatchById(id uint){
+func DeleteUnbindBatchById(id uint) {
 	var unbind_batch UnbindBatch
-	db.W_Db.Where("deleted_at IS NULL and id = ?",id).First(&unbind_batch)
+	db.W_Db.Where("deleted_at IS NULL and id = ?", id).First(&unbind_batch)
 	db.W_Db.Delete(&unbind_batch)
 }
 
-
-func UnbindCount()int{
+func UnbindCount() int {
 	var count int
 	db.W_Db.Table("unbind_batches").Where("deleted_at IS NULL").Count(&count)
 
-	fmt.Println("******************************************************************",count)
+	fmt.Println("******************************************************************", count)
 	return count
 }

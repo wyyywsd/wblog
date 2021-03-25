@@ -1,29 +1,45 @@
 {{define "foot.html"}}
-{{/*    <script src="/static/js/magical_background.js"></script>*/}}
-<script type="text/javascript">
-    /* 鼠标特效 */
-    var a_idx = 0; jQuery(document).ready(function($)
-    { $("body").click(function(e) { var a = new Array("富强", "民主","文明", "和谐", "自由", "平等", "公正" ,"法治", "爱国", "敬业", "诚信", "友善");
-        var $i = $("<span/>").text(a[a_idx]);
-        a_idx = (a_idx + 1) % a.length; var x = e.pageX, y = e.pageY;
-        $i.css({ "z-index": 99, "top": y - 20, "left": x, "position": "absolute", "font-weight": "bold", "color": "rgb(255,0,0)" }); $("body").append($i); $i.animate({ "top": y - 180, "opacity": 0 }, 1500, function(){ $i.remove(); }); }); });
-</script>
-<style>
-    .xiaoacao_footer {
-        height: 30px;
-        line-height: 35px;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        text-align: center;
-        background-color: rgb(40, 40, 45);
-        color: #ffffff;
-        font-family: Arial;
-        font-size: 14px;
-        letter-spacing: 1px;
-    }
-</style>
+    {{/*    <script src="/static/js/magical_background.js"></script>*/}}
+    <script type="text/javascript">
+        /* 鼠标特效 */
+        var a_idx = 0;
+        jQuery(document).ready(function ($) {
+            $("body").click(function (e) {
+                var a = new Array("富强", "民主", "文明", "和谐", "自由", "平等", "公正", "法治", "爱国", "敬业", "诚信", "友善");
+                var $i = $("<span/>").text(a[a_idx]);
+                a_idx = (a_idx + 1) % a.length;
+                var x = e.pageX, y = e.pageY;
+                $i.css({
+                    "z-index": 99,
+                    "top": y - 20,
+                    "left": x,
+                    "position": "absolute",
+                    "font-weight": "bold",
+                    "color": "rgb(255,0,0)"
+                });
+                $("body").append($i);
+                $i.animate({"top": y - 180, "opacity": 0}, 1500, function () {
+                    $i.remove();
+                });
+            });
+        });
+    </script>
+    <style>
+        .xiaoacao_footer {
+            height: 30px;
+            line-height: 35px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            background-color: rgb(40, 40, 45);
+            color: #ffffff;
+            font-family: Arial;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+    </style>
     <div class="xiaoacao_footer">
-        <p>Copyright©2020  王小强  </p>
+        <p>Copyright©2020 王小强 </p>
     </div>
 {{end}}

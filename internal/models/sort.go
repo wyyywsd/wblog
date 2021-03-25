@@ -4,9 +4,8 @@ import "github.com/jinzhu/gorm"
 
 type Sort struct {
 	gorm.Model
-	SortName string
-	SortAlias string
+	SortName        string
+	SortAlias       string
 	SortDescription string
-	ParentSortId int
-
+	ParentSortId    int
 }

@@ -4,7 +4,7 @@
 //
 //     }
 // });
-$().ready(function() {
+$().ready(function () {
     // 在键盘按下并释放及提交后验证提交表单
     $("#signinForm").validate({
         rules: {

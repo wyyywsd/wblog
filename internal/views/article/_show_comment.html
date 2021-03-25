@@ -1,72 +1,80 @@
 {{define "_show_comment.html"}}
     <script>
         //分页按钮跳转
-        function show_comment_by_page(page){
-            $.ajax({url:"/show_comment_by_article/{{.article.ID}}/"+page,success:function(result){
+        function show_comment_by_page(page) {
+            $.ajax({
+                url: "/show_comment_by_article/{{.article.ID}}/" + page, success: function (result) {
                     $("#article_comments").html(result);
-                }});
+                }
+            });
         }
+
         var pageCount = {{.pageCount}};
         var currentPage = {{.current_page}};
         //ajax请求 点赞评论
         //分页按钮跳转
-        function like_comment(comment_id,is_zan){
+        function like_comment(comment_id, is_zan) {
             alert(currentPage)
             $.ajaxSetup({cache: false});
-            var url = "/like_comment/"+comment_id+"/"+currentPage+"/"+is_zan
+            var url = "/like_comment/" + comment_id + "/" + currentPage + "/" + is_zan
             //alert("点赞成功"+url)
-            $.ajax({url:url,success:function(result){
+            $.ajax({
+                url: url, success: function (result) {
                     $("#article_comments").html(result);
-                }});
+                }
+            });
         }
     </script>
     <!-- 分页 -->
     <script src="/static/js/comments.js"></script>
-    <div class = "row">
-    {{$article_user_id := .article_user_id}}
-    {{$current_user := .current_user}}
-    {{range $postkey,$postvalue:=.comments}}
-        <!-- 获取该评论的用户对象 -->
-        {{$comment_user := getUser $postvalue.UserId}}
-        <div class="col-md-1" style="width: 50px;">
-            <img src="{{$comment_user.ProfilePhoto}}" alt="..." class="img-circle" data-toggle="dropdown" style="width: 35px;height: 35px;">
-        </div>
-        <div class="col-md-5">
-            {{$comment_user.Username}}
-            {{if eq $article_user_id $postvalue.UserId}}
-                作者
-            {{end}}
-            <br/>
-            <div id = "is_admin"></div>
-            <span style="color: #8c8c8c;">
+    <div class="row">
+        {{$article_user_id := .article_user_id}}
+        {{$current_user := .current_user}}
+        {{range $postkey,$postvalue:=.comments}}
+            <!-- 获取该评论的用户对象 -->
+            {{$comment_user := getUser $postvalue.UserId}}
+            <div class="col-md-1" style="width: 50px;">
+                <img src="{{$comment_user.ProfilePhoto}}" alt="..." class="img-circle" data-toggle="dropdown"
+                     style="width: 35px;height: 35px;">
+            </div>
+            <div class="col-md-5">
+                {{$comment_user.Username}}
+                {{if eq $article_user_id $postvalue.UserId}}
+                    作者
+                {{end}}
+                <br/>
+                <div id="is_admin"></div>
+                <span style="color: #8c8c8c;">
             {{$postvalue.Floor}}楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{dateFormat $postvalue.CommentDate "06-01-02 15:04"}}
         </span>
 
-        </div>
-        <div class="col-md-11" style="margin-left: 50px" >
-            <h4>{{$postvalue.CommentContent}}</h4>
-            <!-- 这个参数用于判断用户是否点赞过这条评论 -->
-            {{$user_is_zan := $postvalue.FindUserIsZan $current_user}}
-            <span id = "like_comment_span" style="color: #8c8c8c;">
+            </div>
+            <div class="col-md-11" style="margin-left: 50px">
+                <h4>{{$postvalue.CommentContent}}</h4>
+                <!-- 这个参数用于判断用户是否点赞过这条评论 -->
+                {{$user_is_zan := $postvalue.FindUserIsZan $current_user}}
+                <span id="like_comment_span" style="color: #8c8c8c;">
                 {{if $user_is_zan}}
-                    <span id = "like_comment" style="cursor:pointer;" onclick = "like_comment({{$postvalue.ID}},false)">已赞{{$postvalue.FindTrueZansCountByComment}}</span>
+                    <span id="like_comment" style="cursor:pointer;"
+                          onclick="like_comment({{$postvalue.ID}},false)">已赞{{$postvalue.FindTrueZansCountByComment}}</span>
                 {{else}}
-                    <span id = "like_comment" style="cursor:pointer;" onclick = "like_comment({{$postvalue.ID}},true)">赞{{$postvalue.FindTrueZansCountByComment}}</span>
+                    <span id="like_comment" style="cursor:pointer;"
+                          onclick="like_comment({{$postvalue.ID}},true)">赞{{$postvalue.FindTrueZansCountByComment}}</span>
                 {{end}}
 
                 &nbsp;
                 评论
             </span>
-            <hr/>
-        </div>
+                <hr/>
+            </div>
 
 
 
-    {{end}}
+        {{end}}
     </div>
 
     <nav aria-label="Page navigation">
-        <ul id = "article_comment_page" class="pagination">
+        <ul id="article_comment_page" class="pagination">
             <!-- 通过jquery 添加-->
         </ul>
     </nav>

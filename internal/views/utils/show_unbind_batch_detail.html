@@ -29,8 +29,8 @@
             </button>
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal2">修改批次状态
             </button>
-            <a href="/export_data_excel/{{.unbind_batch.ID}}" role="button" class = "btn btn-default">导出卡号为excel</a>
-            <a href="/export_data_txt/{{.unbind_batch.ID}}" role="button" class = "btn btn-default">导出卡号为txt</a>
+            <a href="/export_data_excel/{{.unbind_batch.ID}}" role="button" class="btn btn-default">导出卡号为excel</a>
+            <a href="/export_data_txt/{{.unbind_batch.ID}}" role="button" class="btn btn-default">导出卡号为txt</a>
             <br/><br/>
             <table class="table table-hover">
                 <h3>{{.carrier.Name}}--本批次卡号列表</h3>
@@ -54,27 +54,29 @@
                         <td>{{$postvalue.ReplaceReasonDisplay}}</td>
                         <td>
 
-                            <span  class="glyphicon glyphicon-film" title="设备照片"
-                                    data-toggle="popover" data-placement="right"
-                                   data-trigger="hover" id = "img_sim_card{{$postvalue.ID}}">
+                            <span class="glyphicon glyphicon-film" title="设备照片"
+                                  data-toggle="popover" data-placement="right"
+                                  data-trigger="hover" id="img_sim_card{{$postvalue.ID}}">
                             </span>
                         </td>
                         <script>
-                            $(function (){
-                                a = "<img  id = 'imm' src = '{{$postvalue.EquipmentPhoto}}' style='width:200px'>"
-                                    if (a == ""){
-                                        a = ""
-                                    }
+                            $(function () {
+                                a = "<img  id = 'imm' src = '{{$postvalue.EquipmentPhoto}}' style='width:150px'>"
+                                if (a == "") {
+                                    a = ""
+                                }
                                 $("#img_sim_card{{$postvalue.ID}}").popover({
-                                    animation:true,//淡入淡出
-                                    html:true,//content中插入html代码
-                                    container:"body",
+                                    animation: true,//淡入淡出
+                                    html: true,//content中插入html代码
+                                    container: "body",
                                     content: a,//插入图片的路径 及 样式
                                 });
                             });
                         </script>
 
-                        <td><a onclick="javascript:if (confirm('确定删除吗？')) { return true;}else{return false;};" href="/delete_sim_card/{{$unbind_batch.ID}}/{{$postvalue.ID}}" role="button" class = "btn btn-default btn-xs">删除卡号</a></td>
+                        <td><a onclick="javascript:if (confirm('确定删除吗？')) { return true;}else{return false;};"
+                               href="/delete_sim_card/{{$unbind_batch.ID}}/{{$postvalue.ID}}" role="button"
+                               class="btn btn-default btn-xs">删除卡号</a></td>
                     </tr>
                 {{end}}
                 </tbody>
@@ -85,7 +87,7 @@
     </div>
 
     <nav aria-label="Page navigation">
-        <ul id = "index_article_page" class="pagination">
+        <ul id="index_article_page" class="pagination">
         </ul>
     </nav>
     <br/>
@@ -102,27 +104,27 @@
             <form action="/new_sim_card/{{.unbind_batch.ID}}" method="post">
                 <div class="modal-body">
                     <div class="form-group">
-                        <input type="text" class="form-control" name = "agent_name" placeholder="请输入客户名">
+                        <input type="text" class="form-control" name="agent_name" placeholder="请输入客户名">
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" name = "iccid" placeholder="请输入iccid">
+                        <input type="text" class="form-control" name="iccid" placeholder="请输入iccid">
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" name = "msisdn" placeholder="请输入msisdn">
+                        <input type="text" class="form-control" name="msisdn" placeholder="请输入msisdn">
                     </div>
                     <div class="form-group">
                         <span>请选择更换设备的原因（以下为占比比较多的原因，如果有新增，请及时通知我加进去）</span>
-                        <select class="form-control" name = "replace_reason" >
-                            <option value ="equipment_damage">设备损坏</option>
-                            <option value ="test_equipment">测试设备</option>
-                            <option value ="misoperation">误操作</option>
+                        <select class="form-control" name="replace_reason">
+                            <option value="equipment_damage">设备损坏</option>
+                            <option value="test_equipment">测试设备</option>
+                            <option value="misoperation">误操作</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <input id="testFile" type="file" name = "file">
+                        <input id="testFile" type="file" name="file">
                         <hr>
-                        <img id="testImg"  style="max-height: 300px; height: 8em; min-width:8em;">
-                        <textarea id="testArea" style="width: 100%;height: 30em;" name = "image_base64" hidden></textarea>
+                        <img id="testImg" style="max-height: 300px; height: 8em; min-width:8em;">
+                        <textarea id="testArea" style="width: 100%;height: 30em;" name="image_base64" hidden></textarea>
                     </div>
 
                 </div>
@@ -148,10 +150,10 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <span>请选择状态</span>
-                        <select class="form-control" style="width:100%;" name = "batch_status" >
-                            <option value ="pending" id = "pending">待提交运营商</option>
-                            <option value ="processing" id = "processing">已提交运营商</option>
-                            <option value ="success" id = "success">已完成</option>
+                        <select class="form-control" style="width:100%;" name="batch_status">
+                            <option value="pending" id="pending">待提交运营商</option>
+                            <option value="processing" id="processing">已提交运营商</option>
+                            <option value="success" id="success">已完成</option>
                         </select>
                     </div>
                 </div>
@@ -164,7 +166,7 @@
     </div>
 </div>
 
-<div class="container" style="padding: 100px 50px 10px;" >
+<div class="container" style="padding: 100px 50px 10px;">
 
 </div>
 {{template "foot.html" .}}

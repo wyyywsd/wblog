@@ -8,6 +8,7 @@ import (
 )
 
 var W_Db *gorm.DB
+
 //
 //type DBServer struct {
 //	Host string `toml:"host"`
@@ -35,24 +36,22 @@ var W_Db *gorm.DB
 //	return db,err
 //}
 
-
 func InitDbConnection(dbKey string) {
-	host := viper.GetString(dbKey+".host")
-	user := viper.GetString(dbKey+".user")
-	dbname := viper.GetString(dbKey+".name")
-	password := viper.GetString(dbKey+".password")
-	url := "host="+host+" user="+user+" dbname="+dbname+" sslmode=disable password="+password+""
+	host := viper.GetString(dbKey + ".host")
+	user := viper.GetString(dbKey + ".user")
+	dbname := viper.GetString(dbKey + ".name")
+	password := viper.GetString(dbKey + ".password")
+	url := "host=" + host + " user=" + user + " dbname=" + dbname + " sslmode=disable password=" + password + ""
 	const postgres = "postgres"
 	var err error
-	W_Db,err = gorm.Open(postgres,url)
-	if err != nil{
+	W_Db, err = gorm.Open(postgres, url)
+	if err != nil {
 		panic(err)
-	}else {
+	} else {
 		fmt.Println("连接成功")
 		//fmt.Println(db.HasTable(&User{}))
 	}
 }
-
 
 ////初始化redis数据库的配置
 //type RedisServer struct {
@@ -85,9 +84,3 @@ func InitDbConnection(dbKey string) {
 //
 //
 //
-
-
-
-
-
-

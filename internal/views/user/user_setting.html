@@ -14,16 +14,18 @@
     <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/lib/jquery.js"></script>
     <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
     <script>
-        $(document).ready(function(){
-            $("#basic_setting").click(function(){
-                $.ajax({url:"/_basic_setting",success:function(result){
+        $(document).ready(function () {
+            $("#basic_setting").click(function () {
+                $.ajax({
+                    url: "/_basic_setting", success: function (result) {
                         $("#div1").html(result);
-                    }});
+                    }
+                });
             });
         });
     </script>
     <style>
-        .error{
+        .error {
             color: #ff0000;
             margin-left: 112px;
         }
@@ -36,7 +38,7 @@
 <div class="container">
     <div class="row ">
         <div class="col-md-2">
-            <button id = "basic_setting">基础设置</button>
+            <button id="basic_setting">基础设置</button>
         </div>
         <div class="col-md-8">
             <div id="div1">{{template "_basic_setting.html" .}}</div>
