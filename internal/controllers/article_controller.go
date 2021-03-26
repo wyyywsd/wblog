@@ -10,60 +10,60 @@ import (
 )
 
 func Show_Article(context *gin.Context) {
-	article_id := context.Param("id")
-	article := models.FindArticleById(article_id)
-	article_user, _ := models.FindUserByArticle(&article)
+	articleId := context.Param("id")
+	article := models.FindArticleById(articleId)
+	articleUser, _ := models.FindUserByArticle(&article)
 	session := sessions.Default(context)
 	//fmt.Println(article.ArticleContent)
-	current_user, _, _ := models.FindUserByUserName(fmt.Sprint(session.Get("sessionid")))
+	currentUser, _, _ := models.FindUserByUserName(fmt.Sprint(session.Get("sessionId")))
 	//该文章下第一页的评论
-	comments := models.FindCommentByArticle(article_id, 1, articleCommentCount)
-	comment_count := models.CommentCount(article_id)
+	comments := models.FindCommentByArticle(articleId, 1, articleCommentCount)
+	commentCount := models.CommentCount(articleId)
 	//通过文章的数量 算出分页一共有多少页    如果有余数  就加一 目前先都加1  后面再改
-	pageCount := comment_count / articleCommentCount
-	if comment_count%articleCommentCount != 0 {
-		pageCount = (comment_count / articleCommentCount) + 1
+	pageCount := commentCount / articleCommentCount
+	if commentCount%articleCommentCount != 0 {
+		pageCount = (commentCount / articleCommentCount) + 1
 	}
 
 	context.HTML(200, "show_article.html", gin.H{
 		"article":         article,
-		"article_user":    article_user,
-		"user_session":    session.Get("sessionid"),
-		"current_user":    current_user,
+		"articleUser":     articleUser,
+		"userSession":    session.Get("sessionId"),
+		"currentUser":     currentUser,
 		"comments":        comments,
-		"comment_count":   comment_count,
+		"commentCount":   commentCount,
 		"pageCount":       pageCount,
-		"current_page":    1,
-		"article_user_id": article.UserId,
+		"currentPage":    1,
+		"articleUserId": article.UserId,
 	})
 }
 
 func NewArticle(context *gin.Context) {
 	session := sessions.Default(context)
 	labels, _ := models.AllLabels()
-	current_user, _, _ := models.FindUserByUserName(fmt.Sprint(session.Get("sessionid")))
+	currentUser, _, _ := models.FindUserByUserName(fmt.Sprint(session.Get("sessionId")))
 	context.HTML(200, "new_article.html", gin.H{
-		"user_session": session.Get("sessionid"),
-		"current_user": current_user,
+		"userSession": session.Get("sessionId"),
+		"currentUser": currentUser,
 		"labels":       labels,
 	})
 }
 
 func SaveArticle(context *gin.Context) {
-	article_title := context.PostForm("article_title")
-	article_content := context.PostForm("article_content")
+	articleTitle := context.PostForm("article_title")
+	articleContent := context.PostForm("article_content")
 	session := sessions.Default(context)
-	article_label_id := context.PostForm("article_label")
-	label := models.FindLabelById(article_label_id)
-	is_public_str := context.PostForm("is_public")
-	is_public := true
-	if is_public_str == "false" {
-		is_public = false
+	articleLabelId := context.PostForm("article_label")
+	label := models.FindLabelById(articleLabelId)
+	isPublicStr := context.PostForm("is_public")
+	isPublic := true
+	if isPublicStr == "false" {
+		isPublic = false
 	}
 	//从session中获取当前登陆的用户名
-	current_user_name := session.Get("sessionid")
-	current_user, _, _ := models.FindUserByUserName(fmt.Sprint(current_user_name))
-	models.CreateArticle(article_title, article_content, current_user.ID, label, is_public)
+	currentUserName := session.Get("sessionId")
+	currentUser, _, _ := models.FindUserByUserName(fmt.Sprint(currentUserName))
+	models.CreateArticle(articleTitle, articleContent, currentUser.ID, label, isPublic)
 	fmt.Println("保存文章成功")
 	context.Redirect(http.StatusMovedPermanently, "/index")
 
@@ -72,16 +72,16 @@ func SaveArticle(context *gin.Context) {
 func EditArticle(context *gin.Context) {
 	id := context.Param("id")
 	article := models.FindArticleById(id)
-	article_user, _ := models.FindUserByArticle(&article)
+	articleUser, _ := models.FindUserByArticle(&article)
 	session := sessions.Default(context)
 	labels, _ := models.AllLabels()
 	label := article.FindLabelsByArticle()
-	current_user, _, _ := models.FindUserByUserName(fmt.Sprint(session.Get("sessionid")))
+	currentUser, _, _ := models.FindUserByUserName(fmt.Sprint(session.Get("sessionId")))
 	context.HTML(200, "edit_article.html", gin.H{
 		"article":      article,
-		"article_user": article_user,
-		"user_session": session.Get("sessionid"),
-		"current_user": current_user,
+		"articleUser":  articleUser,
+		"userSession": session.Get("sessionId"),
+		"currentUser": currentUser,
 		"labels":       labels,
 		"label":        label,
 	})
@@ -89,26 +89,26 @@ func EditArticle(context *gin.Context) {
 
 func UpdateArticle(context *gin.Context) {
 	id := context.Param("id")
-	current_article := models.FindArticleById(id)
-	article_title := context.PostForm("article_title")
-	article_content := context.PostForm("article_content")
-	is_public_str := context.PostForm("is_public")
-	is_public := true
-	if is_public_str == "false" {
-		is_public = false
+	currentArticle := models.FindArticleById(id)
+	articleTitle := context.PostForm("article_title")
+	articleContent := context.PostForm("article_content")
+	isPublicStr := context.PostForm("is_public")
+	isPublic := true
+	if isPublicStr == "false" {
+		isPublic = false
 	}
-	var update_map = map[string]interface{}{}
-	if current_article.ArticleTitle != article_title {
-		update_map["ArticleTitle"] = article_title
+	var updateMap = map[string]interface{}{}
+	if currentArticle.ArticleTitle != articleTitle {
+		updateMap["ArticleTitle"] = articleTitle
 	}
-	if current_article.ArticleContent != article_content {
-		update_map["ArticleContent"] = article_content
+	if currentArticle.ArticleContent != articleContent {
+		updateMap["ArticleContent"] = articleContent
 	}
-	if current_article.IsPublic != is_public {
-		update_map["IsPublic"] = is_public
+	if currentArticle.IsPublic != isPublic {
+		updateMap["IsPublic"] = isPublic
 	}
 
-	models.UpdateArticle(current_article, update_map)
+	models.UpdateArticle(currentArticle, updateMap)
 	fmt.Println("更新文章成功")
 	context.Redirect(http.StatusMovedPermanently, "/index")
 
@@ -116,42 +116,42 @@ func UpdateArticle(context *gin.Context) {
 
 func DeleteArticle(context *gin.Context) {
 	id := context.Param("id")
-	current_article := models.FindArticleById(id)
+	currentArticle := models.FindArticleById(id)
 	session := sessions.Default(context)
-	current_user_name := session.Get("sessionid")
+	currentUserName := session.Get("sessionId")
 	//删除
-	db.W_Db.Delete(current_article)
-	context.Redirect(http.StatusMovedPermanently, "/user/"+fmt.Sprint(current_user_name)+"")
+	db.W_Db.Delete(currentArticle)
+	context.Redirect(http.StatusMovedPermanently, "/user/"+fmt.Sprint(currentUserName)+"")
 }
 
 func CollectArticle(context *gin.Context) {
-	article_id := context.Param("id")
-	is_collect_s := context.Param("is_collect")
-	article := models.FindArticleById(article_id)
-	article_user, _ := models.FindUserByArticle(&article)
+	articleId := context.Param("id")
+	isCollectStr := context.Param("is_collect")
+	article := models.FindArticleById(articleId)
+	articleUser, _ := models.FindUserByArticle(&article)
 	session := sessions.Default(context)
-	current_user_name := session.Get("sessionid")
-	current_user, _, _ := models.FindUserByUserName(fmt.Sprint(current_user_name))
-	collect, existsCollect, _ := models.FindCollectByUserIdAndArticleId(current_user.ID, article.ID)
-	is_collect := true
-	if is_collect_s == "false" {
-		is_collect = false
+	currentUserName := session.Get("sessionId")
+	currentUser, _, _ := models.FindUserByUserName(fmt.Sprint(currentUserName))
+	collect, existsCollect, _ := models.FindCollectByUserIdAndArticleId(currentUser.ID, article.ID)
+	isCollect := true
+	if isCollectStr == "false" {
+		isCollect = false
 	}
 	if existsCollect {
 		//更新
-		models.UpdateCollect(collect, is_collect)
+		models.UpdateCollect(collect, isCollect)
 	} else {
 		//新增
-		models.CreateCollect(current_user.ID, article.ID, is_collect)
+		models.CreateCollect(currentUser.ID, article.ID, isCollect)
 	}
 
-	//context.Redirect(http.StatusMovedPermanently, "/article/"+article_id+"/")
+	//context.Redirect(http.StatusMovedPermanently, "/article/"+articleId+"/")
 
 	context.HTML(200, "_show_is_collect.html", gin.H{
 		"article":      article,
-		"current_user": current_user,
-		"user_session": current_user_name,
-		"article_user": article_user,
+		"currentUser": currentUser,
+		"userSession": currentUserName,
+		"articleUser":  articleUser,
 	})
 
 }

@@ -13,11 +13,11 @@ func Register(context *gin.Context) {
 
 func Signup(context *gin.Context) {
 	log.Println("进入注册action")
-	username := context.PostForm("username")
-	password := context.PostForm("password")
+	userName := context.PostForm("username")
+	passWord := context.PostForm("password")
 	email := context.PostForm("email")
 	//验证用户名和邮箱是否存在
-	_, existsUser, _ := models.FindUserByUserName(username)
+	_, existsUser, _ := models.FindUserByUserName(userName)
 	_, existEmail := models.FindUserByEmail(email)
 	if !existsUser {
 		log.Println("找不到用户 继续注册")
@@ -25,7 +25,7 @@ func Signup(context *gin.Context) {
 		//判断邮箱 暂时在后端判断 邮箱唯一性
 		if !existEmail {
 			//保存并跳转到登陆页面
-			user, _ := models.CreateUser(username, password, email)
+			user, _ := models.CreateUser(userName, passWord, email)
 			fmt.Println(user)
 			//context.Redirect(http.StatusMovedPermanently, "/index")
 			context.HTML(200, "signin.html", gin.H{"message": "注册成功，请登录！"})

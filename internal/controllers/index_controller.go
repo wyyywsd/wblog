@@ -29,17 +29,15 @@ func ArticlePageIndex(context *gin.Context) {
 	fmt.Println("******************************************************************", count)
 	labels, _ := models.AllLabels()
 	session := sessions.Default(context)
-	current_user_name := session.Get("sessionid")
-	current_user, _, _ := models.FindUserByUserName(fmt.Sprint(current_user_name))
-	//user,_,_:= models.FindUserByUserName(fmt.Sprint(session.Get("user_session")))
-	//fmt.Println("+++++++++++++++++++++++++++++++++++++++++++++++++",user.Username)
+	currentUserName := session.Get("sessionId")
+	currentUser, _, _ := models.FindUserByUserName(fmt.Sprint(currentUserName))
 	context.HTML(200, "index.html", gin.H{
 		"articles":     articles,
 		"labels":       labels,
 		"pageCount":    pageCount,
-		"user_session": session.Get("sessionid"),
-		"current_user": current_user,
-		"current_page": i,
+		"userSession": session.Get("sessionId"),
+		"currentUser": currentUser,
+		"currentPage": i,
 	})
 }
 
@@ -56,17 +54,17 @@ func ArticleIndex(context *gin.Context) {
 	}
 	labels, _ := models.AllLabels()
 	session := sessions.Default(context)
-	current_user_name := session.Get("sessionid")
-	current_user, _, _ := models.FindUserByUserName(fmt.Sprint(current_user_name))
+	currentUserName := session.Get("sessionId")
+	currentUser, _, _ := models.FindUserByUserName(fmt.Sprint(currentUserName))
 	//user,_,_:= models.FindUserByUserName(fmt.Sprint(session.Get("user_session")))
 	//fmt.Println("+++++++++++++++++++++++++++++++++++++++++++++++++",user.Username)
 	context.HTML(200, "index.html", gin.H{
 		"articles":     articles,
 		"labels":       labels,
 		"pageCount":    pageCount,
-		"user_session": session.Get("sessionid"),
-		"current_user": current_user,
-		"current_page": 1,
+		"userSession": session.Get("sessionId"),
+		"currentUser": currentUser,
+		"currentPage": 1,
 	})
 
 }
@@ -80,20 +78,20 @@ func SearchArticle(context *gin.Context) {
 	}
 	//将string类型的page 设置成int
 	i, _ := strconv.Atoi(page)
-	key_word := context.Query("key_word")
-	fmt.Println("808080895i6u5634853247812342vn93vn4293c4n02938402394vb782b7u842cn7", key_word)
+	keyWord := context.Query("key_word")
+	fmt.Println("808080895i6u5634853247812342vn93vn4293c4n02938402394vb782b7u842cn7", keyWord)
 	session := sessions.Default(context)
-	current_user_name := session.Get("sessionid")
-	current_user, _, _ := models.FindUserByUserName(fmt.Sprint(current_user_name))
+	currentUserName := session.Get("sessionId")
+	currentUser, _, _ := models.FindUserByUserName(fmt.Sprint(currentUserName))
 	//此处返回的error 暂时不处理
-	articles, _ := models.FindArticleByKeyWord(key_word, i, articleCount, true, current_user.ID)
+	articles, _ := models.FindArticleByKeyWord(keyWord, i, articleCount, true, currentUser.ID)
 	for _, v := range articles {
 		fmt.Println(v.ArticleTitle)
-		fmt.Println(key_word)
+		fmt.Println(keyWord)
 	}
 	labels, _ := models.AllLabels()
 	//获取一共搜索到多少文章
-	count := models.KeyWordArticleCount(key_word, true, current_user.ID)
+	count := models.KeyWordArticleCount(keyWord, true, currentUser.ID)
 	////通过文章的数量 算出分页一共有多少页   如果有余数  就加一
 	pageCount := count / articleCount
 	if count%articleCount != 0 {
@@ -103,11 +101,11 @@ func SearchArticle(context *gin.Context) {
 		"articles":     articles,
 		"labels":       labels,
 		"pageCount":    pageCount,
-		"user_session": session.Get("sessionid"),
-		"current_user": current_user,
-		"current_page": i,
-		"page_type":    "search",
-		"key_word":     key_word,
+		"userSession": session.Get("sessionId"),
+		"currentUser": currentUser,
+		"currentPage": i,
+		"pageType":    "search",
+		"keyWord":      keyWord,
 	})
 
 }

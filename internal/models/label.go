@@ -12,9 +12,9 @@ type Label struct {
 	LabelDescription string
 }
 
-func FindLabelById(label_id string) Label {
+func FindLabelById(labelId string) Label {
 	label := Label{}
-	db.W_Db.Where("id = ?", label_id).First(&label)
+	db.W_Db.Where("id = ?", labelId).First(&label)
 	return label
 }
 func AllLabels() ([]*Label, error) {

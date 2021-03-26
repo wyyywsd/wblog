@@ -11,8 +11,6 @@ import (
 
 func Signin(context *gin.Context) {
 	log.Println("进入登录controller")
-	//value,err := context.Get("message")
-	//fmt.Println("dwifqwjifioojfiwqjijoidjqid",value,err)
 	context.HTML(200, "signin.html", gin.H{"message": "12321"})
 }
 
@@ -22,10 +20,10 @@ func Login(context *gin.Context) {
 	//查询用户信息
 	//user,existsUser,err:=models.FindUserByUserName(req.Username)
 	log.Println("22222")
-	username := context.PostForm("username")
-	password := context.PostForm("password")
-	user, existsUser, err := models.FindUserByUserName(username)
-	log.Println(username)
+	userName := context.PostForm("username")
+	passWord := context.PostForm("password")
+	user, existsUser, err := models.FindUserByUserName(userName)
+	log.Println(userName)
 
 	log.Println("查到用户了")
 
@@ -42,7 +40,7 @@ func Login(context *gin.Context) {
 		context.Redirect(http.StatusMovedPermanently, "/signin")
 		return
 	}
-	if user.PassWord != password {
+	if user.PassWord != passWord {
 		log.Println("密码不对")
 		context.Redirect(http.StatusMovedPermanently, "/signin")
 		return
@@ -54,16 +52,16 @@ func Login(context *gin.Context) {
 	//设置sessions的相关参数
 	option := sessions.Options{MaxAge: 3600}
 	session.Options(option)
-	session.Set("sessionid", username)
-	session_err := session.Save()
+	session.Set("sessionId", userName)
+	sessionErr := session.Save()
 
-	if session_err != nil {
-		fmt.Println("保存session失败！错误代码：", session_err)
+	if sessionErr != nil {
+		fmt.Println("保存session失败！错误代码：", sessionErr)
 	} else {
 		fmt.Println("保存session成功")
 	}
-	v := session.Get("sessionid")
-	fmt.Println("sessionid的值是:", v)
+	v := session.Get("sessionId")
+	fmt.Println("sessionId的值是:", v)
 
 	context.Redirect(http.StatusMovedPermanently, "/index")
 
@@ -73,9 +71,9 @@ func Login(context *gin.Context) {
 func AuthRequiredSession() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		session := sessions.Default(context)
-		session_id := session.Get("sessionid")
-		fmt.Println("sessionID+++++", session_id)
-		if session_id == nil {
+		sessionId := session.Get("sessionId")
+		fmt.Println("sessionID+++++", sessionId)
+		if sessionId == nil {
 			context.HTML(200, "signin.html", gin.H{"message": "请先登录"})
 			//context.Next()
 			context.Abort()
@@ -90,8 +88,8 @@ func AuthRequiredSession() gin.HandlerFunc {
 func Logout(c *gin.Context) {
 	fmt.Println("进入注销动作")
 	session := sessions.Default(c)
-	fmt.Println("sessionid===================", session.Get("sessionid"))
-	session.Delete("sessionid")
+	fmt.Println("sessionId===================", session.Get("sessionId"))
+	session.Delete("sessionId")
 	session.Save()
 	c.HTML(200, "signin.html", gin.H{"message": "session已清除"})
 }

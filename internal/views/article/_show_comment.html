@@ -10,13 +10,13 @@
         }
 
         var pageCount = {{.pageCount}};
-        var currentPage = {{.current_page}};
+        var currentPage = {{.currentPage}};
         //ajax请求 点赞评论
         //分页按钮跳转
-        function like_comment(comment_id, is_zan) {
-            alert(currentPage)
+        function like_comment(commentId, isZan) {
+            //alert(currentPage)
             $.ajaxSetup({cache: false});
-            var url = "/like_comment/" + comment_id + "/" + currentPage + "/" + is_zan
+            var url = "/like_comment/" + commentId + "/" + currentPage + "/" + isZan
             //alert("点赞成功"+url)
             $.ajax({
                 url: url, success: function (result) {
@@ -28,8 +28,8 @@
     <!-- 分页 -->
     <script src="/static/js/comments.js"></script>
     <div class="row">
-        {{$article_user_id := .article_user_id}}
-        {{$current_user := .current_user}}
+        {{$article_user_id := .articleUserId}}
+        {{$current_user := .currentUser}}
         {{range $postkey,$postvalue:=.comments}}
             <!-- 获取该评论的用户对象 -->
             {{$comment_user := getUser $postvalue.UserId}}

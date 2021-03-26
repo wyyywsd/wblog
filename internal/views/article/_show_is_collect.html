@@ -13,9 +13,9 @@
         }
     </script>
     {{$article := .article}}
-    {{$current_user := .current_user}}
+    {{$current_user := .currentUser}}
     {{$user_is_collect := $article.FindUserIsCollect $current_user}}
-    {{if ne .article_user.Username .user_session}}
+    {{if ne .articleUser.Username .userSession}}
         {{if $user_is_collect}}
             <span id="collect" style="cursor:pointer;" onclick="collect({{.article.ID}},false)">取消收藏</span>
         {{else}}

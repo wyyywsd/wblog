@@ -17,7 +17,7 @@
     </script>
     <script>
         var pageCount = {{.pageCount}};
-        var currentPage = {{.current_page}};
+        var currentPage = {{.currentPage}};
     </script>
     <!-- 分页 -->
     <script src="/static/js/unbind_index.js"></script>
@@ -42,7 +42,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{range $postkey,$postvalue:=.unbind_batchs}}
+                {{range $postkey,$postvalue:=.unbindBatches}}
                     {{$carrier := $postvalue.FindCarrierByUnbindBatch}}
                     <tr>
                         <td>{{$carrier.Name}}</td>

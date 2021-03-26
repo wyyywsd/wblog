@@ -31,26 +31,26 @@ const batchCount int = 10
 //跳转到图片识别界面
 func PictureRecognition(context *gin.Context) {
 	session := sessions.Default(context)
-	current_user_name := session.Get("sessionid")
-	current_user, _, _ := models.FindUserByUserName(fmt.Sprint(current_user_name))
+	currentUserName := session.Get("sessionId")
+	currentUser, _, _ := models.FindUserByUserName(fmt.Sprint(currentUserName))
 	context.HTML(200, "picture_recognition.html", gin.H{
-		"current_user": current_user,
-		"user_session": current_user_name,
+		"currentUser": currentUser,
+		"userSession": currentUserName,
 	})
 }
 
 //图片识别
 func SubmitPictureRecognition(context *gin.Context) {
-	picture_64 := context.PostForm("picture_64")
+	picture64 := context.PostForm("picture_64")
 	//<p><img src="data:image/png;base64,
 	//" style="max-width:100%;"><br></p>
-	picture_64_re1 := strings.Replace(picture_64, "<p><img src=\"data:image/png;base64,", "", -1)
-	picture_64_re2 := strings.Replace(picture_64_re1, "\" style=\"max-width:100%;\"><br></p>", "", -1)
-	url_values := url.Values{"image": {picture_64_re2}}
-	accurate_basic_url := viper.GetString("accurate_basic.url")
-	access_token := viper.GetString("accurate_basic.access_token")
-	resp, err := http.PostForm(accurate_basic_url+access_token,
-		url_values)
+	picture64Re1 := strings.Replace(picture64, "<p><img src=\"data:image/png;base64,", "", -1)
+	picture64Re2 := strings.Replace(picture64Re1, "\" style=\"max-width:100%;\"><br></p>", "", -1)
+	urlValues := url.Values{"image": {picture64Re2}}
+	accurateBasicUrl := viper.GetString("accurate_basic.url")
+	accessToken := viper.GetString("accurate_basic.access_token")
+	resp, err := http.PostForm(accurateBasicUrl+accessToken,
+		urlValues)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -62,16 +62,16 @@ func SubmitPictureRecognition(context *gin.Context) {
 		return
 	}
 	//fmt.Println(string(body))
-	map_body := string(body)
+	mapBody := string(body)
 	//转换成 map
 	var tempMap map[string][]map[string]string
-	json.Unmarshal([]byte(map_body), &tempMap)
+	json.Unmarshal([]byte(mapBody), &tempMap)
 	//对返回值做特殊处理  全部整合到一行
 	//{"log_id": 1840946480854490027, "words_result_num": 4, "words_result": [{"words": "89860"}, {"words": "45124"}, {"words": "19C07"}, {"words": "72356"}]}
-	list_temp := tempMap["words_result"]
+	listTemp := tempMap["words_result"]
 	//[{"words": "89860"}, {"words": "45124"}, {"words": "19C07"}, {"words": "72356"}]
 	iccids := ""
-	for _, words := range list_temp {
+	for _, words := range listTemp {
 		temp := words["words"]
 		iccids = iccids + temp
 	}
@@ -81,16 +81,16 @@ func SubmitPictureRecognition(context *gin.Context) {
 
 //显示解绑批次列表
 func ShowUnbindBatchIndex(context *gin.Context) {
-	page_string := context.Param("page")
+	pageString := context.Param("page")
 	//将page转换成int
-	page, _ := strconv.Atoi(page_string)
+	page, _ := strconv.Atoi(pageString)
 	//获取所有的运营商类别 用于显示在主页面
 	carriers, _ := models.AllCarriers()
 	session := sessions.Default(context)
-	current_user_name := session.Get("sessionid")
-	current_user, _, _ := models.FindUserByUserName(fmt.Sprint(current_user_name))
+	currentUserName := session.Get("sessionId")
+	currentUser, _, _ := models.FindUserByUserName(fmt.Sprint(currentUserName))
 	//获取所有的批次
-	unbind_batchs, _ := models.FindUnbindBatchByPage(batchCount, page)
+	unbindBatches, _ := models.FindUnbindBatchByPage(batchCount, page)
 
 	//获取一共有多少批次
 	count := models.UnbindCount()
@@ -101,69 +101,63 @@ func ShowUnbindBatchIndex(context *gin.Context) {
 	}
 	context.HTML(200, "unbind_batch.html", gin.H{
 		"carriers":      carriers,
-		"current_user":  current_user,
-		"user_session":  current_user_name,
-		"unbind_batchs": unbind_batchs,
+		"currentUser":   currentUser,
+		"userSession":   currentUserName,
+		"unbindBatches": unbindBatches,
 		"pageCount":     pageCount,
-		"current_page":  page,
+		"currentPage":   page,
 	})
 }
 
 //新建一个解绑批次
 func CreateUnbindBatch(context *gin.Context) {
-	carrier_id_string := context.PostForm("carrier_name")
+	carrierIdString := context.PostForm("carrier_name")
 	status := context.PostForm("batch_status")
 	fmt.Println(status)
-	//session := sessions.Default(context)
-	//current_user_name := session.Get("sessionid")
-	//current_user,_,_:= models.FindUserByUserName(fmt.Sprint(current_user_name))
-	carrier_id, _ := strconv.Atoi(carrier_id_string)
-	models.CreateUnbindBatch(uint(carrier_id), status)
-
-	//carriers,_ := models.AllCarriers()
-
+	carrierId, _ := strconv.Atoi(carrierIdString)
+	models.CreateUnbindBatch(uint(carrierId), status)
 	context.Redirect(http.StatusMovedPermanently, "/batch/index/1")
 }
 
 //显示某个解绑批次的所有卡号
 func ShowUnbindBatch(context *gin.Context) {
-	unbind_batch_id_string := context.Param("unbind_batch_id")
+	unbindBatchIdString := context.Param("unbind_batch_id")
 	//获取的id 转换成int
-	unbind_batch_id, _ := strconv.Atoi(unbind_batch_id_string)
-	unbind_batch, _ := models.FindUnbindBatchById(uint(unbind_batch_id))
+	unbindBatchId, _ := strconv.Atoi(unbindBatchIdString)
+	unbindBatch, _ := models.FindUnbindBatchById(uint(unbindBatchId))
 	//常规获取session
 	session := sessions.Default(context)
-	current_user_name := session.Get("sessionid")
-	current_user, _, _ := models.FindUserByUserName(fmt.Sprint(current_user_name))
-	carrier := unbind_batch.FindCarrierByUnbindBatch()
-	sim_cards, _ := models.FindSimCardsByUnbindBatch(unbind_batch)
-	fmt.Println(len(sim_cards))
+	currentUserName := session.Get("sessionId")
+	currentUser, _, _ := models.FindUserByUserName(fmt.Sprint(currentUserName))
+	carrier := unbindBatch.FindCarrierByUnbindBatch()
+	simCards, _ := models.FindSimCardsByUnbindBatch(unbindBatch)
+	fmt.Println(len(simCards))
 	context.HTML(200, "show_unbind_batch_detail.html", gin.H{
-		"unbind_batch": unbind_batch,
-		"current_user": current_user,
-		"user_session": current_user_name,
-		"sim_cards":    sim_cards,
-		"carrier":      carrier,
+		"unbindBatch": unbindBatch,
+		"currentUser": currentUser,
+		"userSession": currentUserName,
+		"simCards":    simCards,
+		"carrier":     carrier,
 	})
 }
 
 func NewSimCard(context *gin.Context) {
-	agent_name := context.PostForm("agent_name")
+	agentName := context.PostForm("agent_name")
 	iccid := context.PostForm("iccid")
 	msisdn := context.PostForm("msisdn")
-	unbind_batch_id_string := context.Param("unbind_batch_id")
-	replace_reason := context.PostForm("replace_reason")
-	equipment_photo := context.PostForm("image_base64")
+	unbindBatchIdString := context.Param("unbind_batch_id")
+	replaceReason := context.PostForm("replace_reason")
+	equipmentPhoto := context.PostForm("image_base64")
 	//原本是图片直接用base64存入数据库 ， 现改为地址 ， 减少数据库的压力
-	_, file_name_s := WriteFile("file", equipment_photo)
-	//fmt.Println(equipment_photo)
+	_, fileNameStr := WriteFile("file", equipmentPhoto)
+	//fmt.Println(equipmentPhoto)
 	file_name := ""
-	if file_name_s != "" {
-		file_name = "/file" + file_name_s
+	if fileNameStr != "" {
+		file_name = "/file" + fileNameStr
 	}
-	ubind_batch_id, _ := strconv.Atoi(unbind_batch_id_string)
-	models.CreateSimCards(agent_name, iccid, msisdn, uint(ubind_batch_id), replace_reason, file_name)
-	context.Redirect(http.StatusMovedPermanently, "/show_unbind_batch/"+unbind_batch_id_string+"")
+	ubindBatchId, _ := strconv.Atoi(unbindBatchIdString)
+	models.CreateSimCards(agentName, iccid, msisdn, uint(ubindBatchId), replaceReason, file_name)
+	context.Redirect(http.StatusMovedPermanently, "/show_unbind_batch/"+unbindBatchIdString+"")
 }
 
 //base64 图片解码存入服务器
@@ -189,8 +183,8 @@ func WriteFile(path string, base64_image_content string) (bool, string) {
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	n := r.Intn(99999)
-	file_name := "/unbind_picture/" + date + "/" + curFileStr + strconv.Itoa(n) + "." + fileType
-	file := path + file_name
+	fileName := "/unbind_picture/" + date + "/" + curFileStr + strconv.Itoa(n) + "." + fileType
+	file := path + fileName
 	fmt.Println(file)
 	byte, _ := base64.StdEncoding.DecodeString(base64Str)
 
@@ -201,7 +195,7 @@ func WriteFile(path string, base64_image_content string) (bool, string) {
 		fmt.Println("============================================================")
 	}
 
-	return false, file_name
+	return false, fileName
 
 }
 
@@ -217,37 +211,37 @@ func IsFileExist(filename string) bool {
 }
 
 func DeleteSimCard(context *gin.Context) {
-	sim_card_id_string := context.Param("sim_card_id")
-	unbind_batch_id_string := context.Param("unbind_batch_id")
+	simCardIdString := context.Param("sim_card_id")
+	unbindBatchIdString := context.Param("unbind_batch_id")
 	//将string类型的sim_card_id 转换成int
-	sim_card_id, _ := strconv.Atoi(sim_card_id_string)
+	simCardId, _ := strconv.Atoi(simCardIdString)
 	//删除卡方法
-	models.DeleteSimCardById(uint(sim_card_id))
-	context.Redirect(http.StatusMovedPermanently, "/show_unbind_batch/"+unbind_batch_id_string+"")
+	models.DeleteSimCardById(uint(simCardId))
+	context.Redirect(http.StatusMovedPermanently, "/show_unbind_batch/"+unbindBatchIdString+"")
 }
 
 func UpdateUnbindBatchStatus(context *gin.Context) {
-	unbind_batch_id_string := context.Param("unbind_batch_id")
-	batch_status := context.PostForm("batch_status")
-	unbind_batch_id, _ := strconv.Atoi(unbind_batch_id_string)
-	models.UpdateUnbindBatchStatusById(uint(unbind_batch_id), batch_status)
-	context.Redirect(http.StatusMovedPermanently, "/show_unbind_batch/"+unbind_batch_id_string+"")
+	unbindBatchIdString := context.Param("unbind_batch_id")
+	batchStatus := context.PostForm("batch_status")
+	unbindBatchId, _ := strconv.Atoi(unbindBatchIdString)
+	models.UpdateUnbindBatchStatusById(uint(unbindBatchId), batchStatus)
+	context.Redirect(http.StatusMovedPermanently, "/show_unbind_batch/"+unbindBatchIdString+"")
 }
 
 func DeleteUnbindBatch(context *gin.Context) {
-	unbind_batch_id_string := context.Param("unbind_batch_id")
-	unbind_batch_id, _ := strconv.Atoi(unbind_batch_id_string)
-	models.DeleteUnbindBatchById(uint(unbind_batch_id))
+	unbindBatchIdString := context.Param("unbind_batch_id")
+	unbindBatchId, _ := strconv.Atoi(unbindBatchIdString)
+	models.DeleteUnbindBatchById(uint(unbindBatchId))
 	context.Redirect(http.StatusMovedPermanently, "/batch/index/1")
 }
 
 func ExportDataExcel(context *gin.Context) {
-	unbind_batch_id_string := context.Param("unbind_batch_id")
-	unbind_batch_id, _ := strconv.Atoi(unbind_batch_id_string)
+	unbindBatchIdString := context.Param("unbind_batch_id")
+	unbindBatchId, _ := strconv.Atoi(unbindBatchIdString)
 	fmt.Println("进来了")
-	unbind_batch, _ := models.FindUnbindBatchById(uint(unbind_batch_id))
-	carrier := unbind_batch.FindCarrierByUnbindBatch()
-	sim_cards_chan := make(chan *models.SimCard, 40)
+	unbindBatch, _ := models.FindUnbindBatchById(uint(unbindBatchId))
+	carrier := unbindBatch.FindCarrierByUnbindBatch()
+	simCardsChan := make(chan *models.SimCard, 40)
 	var wg sync.WaitGroup
 	wg.Add(2)
 	lock := sync.Mutex{}
@@ -260,14 +254,14 @@ func ExportDataExcel(context *gin.Context) {
 	//表格表头
 	titles := map[string]string{}
 	//创建一个切片 用于对无序的map进行有序的输出
-	var list_for_map_in_order []string
+	var listForMapInOrder []string
 	//用做判断， 无锡移动目前 解绑需要提供设备照片 ，所以单独判断  如果是无锡移动导出卡号，就导出图片  如果后续有其他运营商需要提供设备照片， 再修改这里的判断逻辑
 	if carrier.Name == "无锡移动" {
 		titles = map[string]string{"A1": "iccid", "B1": "msisdn", "C1": "图片"}
-		list_for_map_in_order = append(list_for_map_in_order, "iccid", "msisdn", "picture")
+		listForMapInOrder = append(listForMapInOrder, "iccid", "msisdn", "picture")
 	} else {
 		titles = map[string]string{"A1": "iccid", "B1": "msisdn"}
-		list_for_map_in_order = append(list_for_map_in_order, "iccid", "msisdn")
+		listForMapInOrder = append(listForMapInOrder, "iccid", "msisdn")
 	}
 
 	for key, value := range titles {
@@ -275,20 +269,20 @@ func ExportDataExcel(context *gin.Context) {
 	}
 	//调用方法 去查询对应的卡号数据  把文件写入data中
 	for i := 0; i < 2; i++ {
-		go QuerySimCardData_Wangzq(sim_cards_chan, &wg, &lock, &data, carrier)
+		go QuerySimCardDataForExcel(simCardsChan, &wg, &lock, &data, carrier)
 	}
 
 	//取到simcard数据 传入信道中
-	sim_cardss, _ := models.FindSimCardsByUnbindBatch(unbind_batch)
-	for _, sim_card := range sim_cardss {
-		sim_cards_chan <- sim_card
+	simCardsTemp, _ := models.FindSimCardsByUnbindBatch(unbindBatch)
+	for _, sim_card := range simCardsTemp {
+		simCardsChan <- sim_card
 	}
-	close(sim_cards_chan)
+	close(simCardsChan)
 	wg.Wait()
 	//调用写入表格的方法
-	DoExcel(&list_for_map_in_order, b, f, &data)
+	DoExcel(&listForMapInOrder, b, f, &data)
 	//保存文件
-	filename := unbind_batch.FindCarrierByUnbindBatch().Name + "解绑.xlsx"
+	filename := unbindBatch.FindCarrierByUnbindBatch().Name + "解绑.xlsx"
 	filepath := "/Users/mac/Desktop/解绑专用/" + filename
 	if err := f.SaveAs(filepath); err != nil {
 		println(err.Error() + "123123123")
@@ -298,20 +292,20 @@ func ExportDataExcel(context *gin.Context) {
 	context.File(filepath)
 }
 
-func QuerySimCardData_Wangzq(sim_cards chan *models.SimCard, wg *sync.WaitGroup, lock *sync.Mutex, data *[](map[string]string), carrier models.Carrier) {
+func QuerySimCardDataForExcel(sim_cards chan *models.SimCard, wg *sync.WaitGroup, lock *sync.Mutex, data *[](map[string]string), carrier models.Carrier) {
 	fmt.Println("进来了2")
 	defer wg.Done()
-	for sim_card := range sim_cards {
-		data_item := map[string]string{}
-		data_item["iccid"] = sim_card.Iccid
-		data_item["msisdn"] = sim_card.Msisdn
+	for simCard := range sim_cards {
+		dataItem := map[string]string{}
+		dataItem["iccid"] = simCard.Iccid
+		dataItem["msisdn"] = simCard.Msisdn
 		//用做判断， 无锡移动目前 解绑需要提供设备照片 ，所以单独判断  如果是无锡移动导出卡号，就导出图片  如果后续有其他运营商需要提供设备照片， 再修改这里的判断逻辑
 		if carrier.Name == "无锡移动" {
-			data_item["picture"] = sim_card.EquipmentPhoto
+			dataItem["picture"] = simCard.EquipmentPhoto
 		}
 		//将数据存入data中
 		lock.Lock()
-		*data = append(*data, data_item)
+		*data = append(*data, dataItem)
 		fmt.Printf("记录了%s次数据\n", "***")
 		lock.Unlock()
 	}
@@ -320,7 +314,7 @@ func QuerySimCardData_Wangzq(sim_cards chan *models.SimCard, wg *sync.WaitGroup,
 //表格写入方法
 func DoExcel(list_for_map_in_order *[]string, b int, f *excelize.File, data *[](map[string]string)) {
 	//这个参数 临时用来判断 前一个卡号是否有图片添加，  如果有  图片后面的卡号  往下移动几行 再写入
-	pic_temp := 0
+	picTemp := 0
 	for _, dataa := range *data {
 		a := 1
 		for _, key := range *list_for_map_in_order {
@@ -329,29 +323,29 @@ func DoExcel(list_for_map_in_order *[]string, b int, f *excelize.File, data *[](
 				fmt.Println("进入图片这里了")
 				if dataa[key] == "" {
 					//到这里证明是写入卡号了 设置成0
-					pic_temp = 0
+					picTemp = 0
 					break
 				}
 				fmt.Println(dataa[key])
 				reg1 := regexp.MustCompile(`file\/unbind_picture.*`)
-				file_name := reg1.FindAllStringSubmatch(dataa[key], -1)
-				fmt.Println(file_name[0])
+				fileName := reg1.FindAllStringSubmatch(dataa[key], -1)
+				fmt.Println(fileName[0])
 				fmt.Println(b)
-				if err := f.AddPicture("Sheet1", col+strconv.Itoa(b), file_name[0][0], `{
+				if err := f.AddPicture("Sheet1", col+strconv.Itoa(b), fileName[0][0], `{
         			"x_scale": 0.1,
         			"y_scale": 0.1
     			}`); err != nil {
 					fmt.Println(err)
 				}
 				//到了这里证明  是添加了图片的 设置值为1
-				pic_temp = 1
+				picTemp = 1
 			} else {
-				if pic_temp == 1 {
+				if picTemp == 1 {
 					b += 5
 				}
 				f.SetCellValue("Sheet1", col+strconv.Itoa(b), dataa[key])
 				//到这里证明是写入卡号了 设置成0
-				pic_temp = 0
+				picTemp = 0
 			}
 			a++
 		}
@@ -361,11 +355,11 @@ func DoExcel(list_for_map_in_order *[]string, b int, f *excelize.File, data *[](
 }
 
 func ExportDataTxt(context *gin.Context) {
-	unbind_batch_id_string := context.Param("unbind_batch_id")
-	unbind_batch_id, _ := strconv.Atoi(unbind_batch_id_string)
+	unbindBatchIdString := context.Param("unbind_batch_id")
+	unbindBatchId, _ := strconv.Atoi(unbindBatchIdString)
 	fmt.Println("进来了")
-	unbind_batch, _ := models.FindUnbindBatchById(uint(unbind_batch_id))
-	filename := unbind_batch.FindCarrierByUnbindBatch().Name + "解绑.txt"
+	unbindBatch, _ := models.FindUnbindBatchById(uint(unbindBatchId))
+	filename := unbindBatch.FindCarrierByUnbindBatch().Name + "解绑.txt"
 	filepath := "/Users/mac/Desktop/解绑专用/" + filename
 
 	f, err := os.OpenFile(filepath, os.O_CREATE|os.O_WRONLY, 0666)
@@ -373,7 +367,7 @@ func ExportDataTxt(context *gin.Context) {
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
-		sim_cards, _ := models.FindSimCardsByUnbindBatch(unbind_batch)
+		sim_cards, _ := models.FindSimCardsByUnbindBatch(unbindBatch)
 		for _, sim_card := range sim_cards {
 			f.Write([]byte(sim_card.Msisdn + "\r\n"))
 		}

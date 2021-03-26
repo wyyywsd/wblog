@@ -31,7 +31,7 @@
           autocomplete="off">
         <div class="form-group">
             {{/*        <label for="exampleInputFile">头像</label>*/}}
-            <img src="{{.current_user.ProfilePhoto}}" alt="..." class="img-circle" data-toggle="dropdown"
+            <img src="{{.currentUser.ProfilePhoto}}" alt="..." class="img-circle" data-toggle="dropdown"
                  style="width: 35px;height: 35px;">
             <input type="file" id="exampleInputFile" accept="image/*" name="file" class="file">
         </div>
@@ -40,7 +40,7 @@
             <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
             <div>
                 <input type="text" class="form-control" id="username" name="username" style="width: 40%;"
-                       placeholder={{.current_user.Username}}>
+                       placeholder={{.currentUser.Username}}>
             </div>
 
         </div>
@@ -58,7 +58,7 @@
             <label for="inputEmail3" class="col-sm-2 control-label">email</label>
             <div>
                 <input type="email" class="form-control" id="email" name="email" style="width: 40%;"
-                       placeholder={{.current_user.Email}}>
+                       placeholder={{.currentUser.Email}}>
             </div>
 
         </div>

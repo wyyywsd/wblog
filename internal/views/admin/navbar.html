@@ -34,13 +34,13 @@
                 </ul>
                 <!-- 登陆注册 -->
                 <form class="navbar-form navbar-right" role="search">
-                    {{if .user_session }}
+                    {{if .userSession }}
                         <li class="dropdown">
-                            <img src="{{.current_user.ProfilePhoto}}" alt="..." class="img-circle"
+                            <img src="{{.currentUser.ProfilePhoto}}" alt="..." class="img-circle"
                                  data-toggle="dropdown" style="width: 35px;height: 35px;">
 
                             <ul class="dropdown-menu">
-                                <li><a href="/user/{{.user_session}}">我的主页</a></li>
+                                <li><a href="/user/{{.userSession}}">我的主页</a></li>
                                 <li><a href="#">消息</a></li>
                                 <li><a href="/user_setting">设置</a></li>
                                 <li><a href="/logout">退出</a></li>

@@ -26,10 +26,10 @@ type User struct {
 	UserFriends          []*UserFriend `gorm:"ForeignKey:UserId"`
 }
 
-func UpdateUser(user User, update_map map[string]interface{}) error {
+func UpdateUser(user User, updateMap map[string]interface{}) error {
 	fmt.Println(user.Username)
-	fmt.Println(update_map)
-	err := db.W_Db.Model(&user).Updates(update_map).Error
+	fmt.Println(updateMap)
+	err := db.W_Db.Model(&user).Updates(updateMap).Error
 	return err
 
 }

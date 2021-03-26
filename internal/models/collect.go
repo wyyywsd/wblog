@@ -12,23 +12,23 @@ type Collect struct {
 	IsCollect bool
 }
 
-func CreateCollect(user_id uint, article_id uint, is_collect bool) {
+func CreateCollect(userId uint, articleId uint, isCollect bool) {
 	collect := Collect{
-		UserId:    user_id,
-		ArticleID: article_id,
-		IsCollect: is_collect,
+		UserId:    userId,
+		ArticleID: articleId,
+		IsCollect: isCollect,
 	}
 	db.W_Db.Create(&collect)
 }
 
-func UpdateCollect(collect *Collect, is_collect bool) {
-	db.W_Db.Model(&collect).Update("is_collect", is_collect)
+func UpdateCollect(collect *Collect, isCollect bool) {
+	db.W_Db.Model(&collect).Update("is_collect", isCollect)
 }
 
-func FindCollectByUserIdAndArticleId(user_id uint, article_id uint) (*Collect, bool, error) {
+func FindCollectByUserIdAndArticleId(userId uint, articleId uint) (*Collect, bool, error) {
 	collect := &Collect{}
 	var err error
-	err = db.W_Db.Where("deleted_at IS NULL and user_id = ? and article_id = ?", user_id, article_id).First(&collect).Error
+	err = db.W_Db.Where("deleted_at IS NULL and user_id = ? and article_id = ?", userId, articleId).First(&collect).Error
 	if err != nil {
 		if err != gorm.ErrRecordNotFound {
 			return nil, false, err

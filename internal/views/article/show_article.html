@@ -26,17 +26,17 @@
             <h3>{{.article.ArticleTitle}}</h3>
             <div class="row ">
                 <div class="col-md-1 " style="width: 50px;">
-                    <img src="{{.article_user.ProfilePhoto}}" alt="..." class="img-circle" data-toggle="dropdown"
+                    <img src="{{.articleUser.ProfilePhoto}}" alt="..." class="img-circle" data-toggle="dropdown"
                          style="width: 35px;height: 35px;">
                     {{/*                    <span class="User_Data">头像</span><br/>*/}}
                 </div>
                 <div class="col-md-2">
-                    <span class="User_Data">{{.article_user.Username}}</span>
+                    <span class="User_Data">{{.articleUser.Username}}</span>
                     </span>
                 </div>
                 <span class="Create_Time" style="margin-right: 100px;">
                 <span class="glyphicon glyphicon-calendar"></span>{{dateFormat .article.CreatedAt "06-01-02 15:04"}}</span>
-                {{if eq .article_user.Username .user_session}}
+                {{if eq .articleUser.Username .userSession}}
                     <a href="/edit_article/{{.article.ID}}">编辑</a>
                     <a onclick="javascript:if (confirm('确定删除吗？')) { return true;}else{return false;};"
                        href="/delete_article/{{.article.ID}}">删除</a>
@@ -64,7 +64,7 @@
                     <button type="submit" class="btn btn-default" style="margin-left: 646px">提交</button>
                 </form>
             </div>
-            <h4>全部评论 {{.comment_count }}</h4></br>
+            <h4>全部评论 {{.commentCount }}</h4></br>
             <div id="article_comments">
                 {{template "_show_comment.html" .}}
             </div>

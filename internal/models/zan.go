@@ -13,23 +13,23 @@ type Zan struct {
 	IsZan     bool
 }
 
-func CreateZan(user_id uint, comment_id uint, is_zan bool) {
+func CreateZan(userId uint, commentId uint, isZan bool) {
 	zan := Zan{
-		UserId:    user_id,
-		CommentId: comment_id,
-		IsZan:     is_zan,
+		UserId:    userId,
+		CommentId: commentId,
+		IsZan:     isZan,
 	}
 	db.W_Db.Create(&zan)
 }
 
-func UpdateZan(zan *Zan, is_zan bool) {
-	fmt.Println("更新获取到的值是", is_zan)
-	db.W_Db.Model(&zan).Update("is_zan", is_zan)
+func UpdateZan(zan *Zan, isZan bool) {
+	fmt.Println("更新获取到的值是", isZan)
+	db.W_Db.Model(&zan).Update("is_zan", isZan)
 }
-func FindZanByUserIDAndCommentID(user_id uint, comment_id uint) (*Zan, bool, error) {
+func FindZanByUserIDAndCommentID(userId uint, commentId uint) (*Zan, bool, error) {
 	zan := &Zan{}
 	var err error
-	err = db.W_Db.Where("deleted_at IS NULL and user_id = ? and comment_id = ?", user_id, comment_id).First(&zan).Error
+	err = db.W_Db.Where("deleted_at IS NULL and user_id = ? and comment_id = ?", userId, commentId).First(&zan).Error
 	if err != nil {
 		//如果不是找不到表的错误，返回
 		if err != gorm.ErrRecordNotFound {

@@ -12,7 +12,7 @@
     <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
     <script src="/static/js/show_unbind_batch_detail.js"></script>
     <script>
-        var unbind_status = {{.unbind_batch.Status}}
+        var unbind_status = {{.unbindBatch.Status}}
     </script>
 
 </head>
@@ -23,14 +23,14 @@
         <div class="col-md-12">
             <ul class="breadcrumb">
                 <li><a href="/batch/index/1">Home</a></li>
-                <li class="active">{{dateFormat .unbind_batch.CreatedAt "2006-01-02-15:04"}}--{{.carrier.Name}}</li>
+                <li class="active">{{dateFormat .unbindBatch.CreatedAt "2006-01-02-15:04"}}--{{.carrier.Name}}</li>
             </ul>
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal">新增卡号
             </button>
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#exampleModal2">修改批次状态
             </button>
-            <a href="/export_data_excel/{{.unbind_batch.ID}}" role="button" class="btn btn-default">导出卡号为excel</a>
-            <a href="/export_data_txt/{{.unbind_batch.ID}}" role="button" class="btn btn-default">导出卡号为txt</a>
+            <a href="/export_data_excel/{{.unbindBatch.ID}}" role="button" class="btn btn-default">导出卡号为excel</a>
+            <a href="/export_data_txt/{{.unbindBatch.ID}}" role="button" class="btn btn-default">导出卡号为txt</a>
             <br/><br/>
             <table class="table table-hover">
                 <h3>{{.carrier.Name}}--本批次卡号列表</h3>
@@ -45,8 +45,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                {{$unbind_batch := .unbind_batch}}
-                {{range $postkey,$postvalue:=.sim_cards}}
+                {{$unbind_batch := .unbindBatch}}
+                {{range $postkey,$postvalue:=.simCards}}
                     <tr>
                         <td>{{$postvalue.AgentName}}</td>
                         <td>{{$postvalue.Msisdn}}</td>
@@ -101,7 +101,7 @@
                             aria-hidden="true">×</span></button>
                 <h4 class="modal-title" id="exampleModalLabel">新增卡号</h4>
             </div>
-            <form action="/new_sim_card/{{.unbind_batch.ID}}" method="post">
+            <form action="/new_sim_card/{{.unbindBatch.ID}}" method="post">
                 <div class="modal-body">
                     <div class="form-group">
                         <input type="text" class="form-control" name="agent_name" placeholder="请输入客户名">
@@ -146,7 +146,7 @@
                             aria-hidden="true">×</span></button>
                 <h4 class="modal-title" id="exampleModalLabel">新增卡号</h4>
             </div>
-            <form action="/update_unbind_batch_status/{{.unbind_batch.ID}}" method="post">
+            <form action="/update_unbind_batch_status/{{.unbindBatch.ID}}" method="post">
                 <div class="modal-body">
                     <div class="form-group">
                         <span>请选择状态</span>

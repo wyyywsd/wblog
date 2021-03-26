@@ -33,7 +33,7 @@ func main() {
 
 	//在路由中使用中间件调用store
 	var store = cookie.NewStore([]byte("secret"))
-	router.Use(sessions.Sessions("sessionid", store))
+	router.Use(sessions.Sessions("sessionId", store))
 
 	//路由
 	router.GET("/signin", controllers.Signin)
@@ -91,7 +91,6 @@ func setTemplate(engine *gin.Engine) {
 		"replaceHtml": helpers.ReplaceHtml,
 		"getUser": helpers.GetUserByComment,
 		"safeURL": helpers.SafeURL,
-		"Test": helpers.Test,
 	}
 
 	engine.SetFuncMap(funcMap)
