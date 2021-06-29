@@ -2,8 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 	"gorm_demo/internal/models"
 	"io"
 	"log"
@@ -11,6 +9,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 const userArticleCount int = 5
@@ -32,8 +33,8 @@ func ShowUser(context *gin.Context) {
 	context.HTML(200, "show_user.html", gin.H{
 		"currentUser": currentUser,
 		"userSession": session.Get("sessionId"),
-		"articles":     articles,
-		"pageCount":    pageCount,
+		"articles":    articles,
+		"pageCount":   pageCount,
 		"currentPage": 1,
 	})
 }
@@ -169,10 +170,10 @@ func ShowUserArticles(context *gin.Context) {
 	context.HTML(200, "_user_articles.html", gin.H{
 		"articles": articles,
 		//"labels": 	labels,
-		"pageCount":    pageCount,
+		"pageCount":   pageCount,
 		"userSession": session.Get("sessionId"),
 		"currentUser": currentUser,
-		"currentPage":  i,
+		"currentPage": i,
 		"pageType":    "user_articles",
 	})
 }
@@ -200,10 +201,10 @@ func ShowUserCollects(context *gin.Context) {
 	context.HTML(200, "_user_collect_articles.html", gin.H{
 		"articles": myCollectArticles,
 		//"labels": 	labels,
-		"pageCount":    pageCount,
+		"pageCount":   pageCount,
 		"userSession": session.Get("sessionId"),
 		"currentUser": currentUser,
-		"currentPage":  i,
+		"currentPage": i,
 		"pageType":    "collect",
 	})
 }

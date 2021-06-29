@@ -13,6 +13,15 @@
     <script src="/static/js/show_unbind_batch_detail.js"></script>
     <script>
         var unbind_status = {{.unbindBatch.Status}}
+            function set_value(agent_name, msisdn, iccid, imei, id, equipmentPhoto) {
+                $("#edit_agent_name").val(agent_name)
+                $("#edit_iccid").val(iccid)
+                $("#edit_msisdn").val(msisdn)
+                $("#edit_imei").val(imei)
+                $("#edit_sim_card_id").val(id)
+               // $("#testImg").attr('src', equipmentPhoto)
+                // $('#testArea').val(data);
+            }
     </script>
 
 </head>
@@ -39,6 +48,7 @@
                     <th>客户</th>
                     <th>msisdn</th>
                     <th>iccid</th>
+                    <th>imei</th>
                     <th>更换设备的原因</th>
                     <th>设备照片</th>
                     <th>操作</th>
@@ -51,6 +61,7 @@
                         <td>{{$postvalue.AgentName}}</td>
                         <td>{{$postvalue.Msisdn}}</td>
                         <td>{{$postvalue.Iccid}}</td>
+                        <td>{{$postvalue.Imei}}</td>
                         <td>{{$postvalue.ReplaceReasonDisplay}}</td>
                         <td>
 
@@ -74,9 +85,17 @@
                             });
                         </script>
 
-                        <td><a onclick="javascript:if (confirm('确定删除吗？')) { return true;}else{return false;};"
+                        <td>
+                            <button type="button" class="btn btn-default btn-xs" data-toggle="modal"
+                                    data-target="#exampleModal3"
+                                    onclick="set_value({{$postvalue.AgentName}},{{$postvalue.Msisdn}},{{$postvalue.Iccid}},{{$postvalue.Imei}},{{$postvalue.ID}},{{$postvalue.EquipmentPhoto}})">
+                                编辑
+                            </button>
+                            <a onclick="javascript:if (confirm('确定删除吗？')) { return true;}else{return false;};"
                                href="/delete_sim_card/{{$unbind_batch.ID}}/{{$postvalue.ID}}" role="button"
-                               class="btn btn-default btn-xs">删除卡号</a></td>
+                               class="btn btn-default btn-xs">删除卡号</a>
+
+                        </td>
                     </tr>
                 {{end}}
                 </tbody>
@@ -113,6 +132,61 @@
                         <input type="text" class="form-control" name="msisdn" placeholder="请输入msisdn">
                     </div>
                     <div class="form-group">
+                        <input type="text" class="form-control" name="imei" placeholder="请输入imei">
+                    </div>
+                    <div class="form-group">
+                        <span>请选择更换设备的原因（以下为占比比较多的原因，如果有新增，请及时通知我加进去）</span>
+                        <select class="form-control" name="replace_reason">
+                            <option value="equipment_damage">设备损坏</option>
+                            <option value="test_equipment">测试设备</option>
+                            <option value="misoperation">误操作</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input id="testFile" type="file" name="file">
+                        <hr>
+                        <img id="testImg" style="max-height: 300px; height: 8em; min-width:8em;">
+                        <textarea id="testArea" style="width: 100%;height: 30em;" name="image_base64" hidden></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">编辑卡号</h4>
+            </div>
+            <form action="/update_sim_card/{{.unbindBatch.ID}}" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="hidden" id="edit_sim_card_id" class="form-control" name="sim_card_id">
+                        <input type="text" id="edit_agent_name" class="form-control" name="agent_name"
+                               placeholder="请输入客户名">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="edit_iccid" class="form-control" name="iccid" placeholder="请输入iccid"
+                               value="">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="edit_msisdn" class="form-control" name="msisdn" placeholder="请输入msisdn"
+                               value="">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="edit_imei" class="form-control" name="imei" placeholder="请输入imei"
+                               value="">
+                    </div>
+                    <div class="form-group">
                         <span>请选择更换设备的原因（以下为占比比较多的原因，如果有新增，请及时通知我加进去）</span>
                         <select class="form-control" name="replace_reason">
                             <option value="equipment_damage">设备损坏</option>
@@ -144,7 +218,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">×</span></button>
-                <h4 class="modal-title" id="exampleModalLabel">新增卡号</h4>
+                <h4 class="modal-title" id="exampleModalLabel">修改批次状态</h4>
             </div>
             <form action="/update_unbind_batch_status/{{.unbindBatch.ID}}" method="post">
                 <div class="modal-body">

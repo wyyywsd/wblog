@@ -2,10 +2,11 @@ package models
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"gorm_demo/internal/db"
 	"log"
 	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 type Article struct {
@@ -83,8 +84,6 @@ func PublicArticleLimit(page int, articleCount int) ([]*Article, error) {
 func ArticleCount() int {
 	var count int
 	db.W_Db.Table("articles").Where("deleted_at IS NULL and is_public = ?", true).Count(&count)
-
-	fmt.Println("******************************************************************", count)
 	return count
 }
 

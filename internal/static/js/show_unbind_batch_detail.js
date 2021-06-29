@@ -16,6 +16,7 @@ $(document).ready(function () {
 
     $("#testFile").change(function () {
         run(this, function (data) {
+            alert(data)
             $('#testImg').attr('src', data);
             $('#testArea').val(data);
         });
@@ -62,6 +63,7 @@ $(document).ready(function () {
             }
         }
     }
+
 
 });
 

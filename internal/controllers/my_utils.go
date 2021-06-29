@@ -4,10 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/360EntSecGroup-Skylar/excelize/v2"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	"gorm_demo/internal/models"
 	_ "image/gif"
 	_ "image/jpeg"
@@ -23,6 +19,11 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 //分页的数量
@@ -73,7 +74,14 @@ func SubmitPictureRecognition(context *gin.Context) {
 	iccids := ""
 	for _, words := range listTemp {
 		temp := words["words"]
-		iccids = iccids + temp
+		b ,_ := regexp.MatchString(`^8986`, temp) 
+		fmt.Println(b)
+		if b {
+			iccids = iccids  + temp  + "\n"
+		}else{
+			iccids = iccids + temp
+		}
+		
 	}
 	fmt.Println(iccids)
 	context.String(http.StatusOK, iccids)
@@ -145,35 +153,36 @@ func NewSimCard(context *gin.Context) {
 	agentName := context.PostForm("agent_name")
 	iccid := context.PostForm("iccid")
 	msisdn := context.PostForm("msisdn")
+	imei := context.PostForm("imei")
 	unbindBatchIdString := context.Param("unbind_batch_id")
 	replaceReason := context.PostForm("replace_reason")
 	equipmentPhoto := context.PostForm("image_base64")
 	//原本是图片直接用base64存入数据库 ， 现改为地址 ， 减少数据库的压力
 	_, fileNameStr := WriteFile("file", equipmentPhoto)
 	//fmt.Println(equipmentPhoto)
-	file_name := ""
+	fileName := ""
 	if fileNameStr != "" {
-		file_name = "/file" + fileNameStr
+		fileName = "/file" + fileNameStr
 	}
 	ubindBatchId, _ := strconv.Atoi(unbindBatchIdString)
-	models.CreateSimCards(agentName, iccid, msisdn, uint(ubindBatchId), replaceReason, file_name)
+	models.CreateSimCards(agentName, iccid, msisdn, imei, uint(ubindBatchId), replaceReason, fileName)
 	context.Redirect(http.StatusMovedPermanently, "/show_unbind_batch/"+unbindBatchIdString+"")
 }
 
 //base64 图片解码存入服务器
-func WriteFile(path string, base64_image_content string) (bool, string) {
+func WriteFile(path string, base64ImageContent string) (bool, string) {
 	fmt.Println("第一步成功")
-	b, _ := regexp.MatchString(`^data:\s*image\/(\w+);base64,`, base64_image_content)
+	b, _ := regexp.MatchString(`^data:\s*image\/(\w+);base64,`, base64ImageContent)
 	if !b {
 		return false, ""
 	}
 	re, _ := regexp.Compile(`^data:\s*image\/(\w+);base64,`)
 
-	allData := re.FindAllSubmatch([]byte(base64_image_content), 2)
+	allData := re.FindAllSubmatch([]byte(base64ImageContent), 2)
 	fmt.Println(allData)
 	fileType := string(allData[0][1]) //png ，jpeg 后缀获取
 	fmt.Println(fileType)
-	base64Str := re.ReplaceAllString(base64_image_content, "")
+	base64Str := re.ReplaceAllString(base64ImageContent, "")
 	//fmt.Println(base64Str)
 	date := time.Now().Format("2006-01-02")
 	if ok := IsFileExist(path + "/" + date); !ok {
@@ -376,4 +385,41 @@ func ExportDataTxt(context *gin.Context) {
 	context.Writer.Header().Add("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
 	context.Writer.Header().Add("Content-Type", "application/txt")
 	context.File(filepath)
+}
+
+func UpdateSimCard(context *gin.Context) {
+	unbindBatchIdString := context.Param("unbind_batch_id")
+	simCardID := context.PostForm("sim_card_id")
+	iccid := context.PostForm("iccid")
+	msisdn := context.PostForm("msisdn")
+	imei := context.PostForm("imei")
+	replaceReason := context.PostForm("replace_reason")
+	agentName := context.PostForm("agent_name")
+	fmt.Println(simCardID, iccid, msisdn, imei, agentName)
+	simCard, _ := models.FindSimCardById(simCardID)
+	var updateMap = map[string]interface{}{}
+	if simCard.Iccid != iccid {
+		updateMap["Iccid"] = iccid
+	}
+	if simCard.Msisdn != msisdn {
+		updateMap["Msisdn"] = msisdn
+	}
+	if simCard.Imei != imei {
+		updateMap["Imei"] = imei
+	}
+	if simCard.ReplaceReason != replaceReason {
+		updateMap["ReplaceReason"] = replaceReason
+	}
+	//在这里判断是否要修改图片
+	//equipmentPhoto := context.PostForm("image_base64")
+	//if simCard.EquipmentPhoto != equipmentPhoto {
+	//	_, fileNameStr := WriteFile("file", equipmentPhoto)
+	//	fileName := ""
+	//	if fileNameStr != "" {
+	//		fileName = "/file" + fileNameStr
+	//		updateMap["EquipmentPhoto"] = fileName
+	//	}
+	//}
+	models.UpdateSimCard(simCard, updateMap)
+	context.Redirect(http.StatusMovedPermanently, "/show_unbind_batch/"+unbindBatchIdString+"")
 }

@@ -35,6 +35,7 @@ func main() {
 	var store = cookie.NewStore([]byte("secret"))
 	router.Use(sessions.Sessions("sessionId", store))
 
+	router.GET("/api/index", controllers.ApiDemo)
 	//路由
 	router.GET("/signin", controllers.Signin)
 	router.POST("/login",controllers.Login)
@@ -78,9 +79,10 @@ func main() {
 		auth.GET("/delete_unbind_batch/:unbind_batch_id",controllers.DeleteUnbindBatch)
 		auth.GET("/export_data_excel/:unbind_batch_id",controllers.ExportDataExcel)
 		auth.GET("/export_data_txt/:unbind_batch_id",controllers.ExportDataTxt)
+		auth.POST("/update_sim_card/:unbind_batch_id",controllers.UpdateSimCard)
 
 	}
-	router.Run(":8080")
+	router.Run(":8082")
 }
 
 

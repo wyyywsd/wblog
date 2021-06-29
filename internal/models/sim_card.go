@@ -9,6 +9,7 @@ type SimCard struct {
 	gorm.Model
 	Iccid          string
 	Msisdn         string
+	Imei           string
 	UnbindBatchID  uint
 	AgentName      string
 	ReplaceReason  string
@@ -22,11 +23,12 @@ func FindSimCardsByUnbindBatch(unbindBatch UnbindBatch) ([]*SimCard, error) {
 	return simCards, err
 }
 
-func CreateSimCards(agentName string, iccid string, msisdn string, unbindBatchId uint, replaceReason string, equipmentPhoto string) {
+func CreateSimCards(agentName string, iccid string, msisdn string, imei string, unbindBatchId uint, replaceReason string, equipmentPhoto string) {
 	sim_card := SimCard{
 		AgentName:      agentName,
 		Iccid:          iccid,
 		Msisdn:         msisdn,
+		Imei:           imei,
 		UnbindBatchID:  unbindBatchId,
 		ReplaceReason:  replaceReason,
 		EquipmentPhoto: equipmentPhoto,
@@ -53,4 +55,14 @@ func (simCard *SimCard) ReplaceReasonDisplay() string {
 	}
 
 	return reason
+}
+
+func UpdateSimCard(simCard SimCard,updateMap map[string]interface{}) {
+	db.W_Db.Model(&simCard).Updates(updateMap)
+}
+
+func FindSimCardById(id string)(SimCard,error){
+	var simCard SimCard
+	err := db.W_Db.Where("deleted_at IS NULL and id = ?", id).First(&simCard).Error
+	return simCard,err
 }
